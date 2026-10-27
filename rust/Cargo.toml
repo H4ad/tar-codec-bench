@@ -1,0 +1,17 @@
+[package]
+name = "tarcodec_node"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+flate2 = { version = "1.1.10", default-features = false, features = ["zlib-rs"] }
+napi = { version = "3.15.0", features = ["napi9"] }
+napi-derive = "3.6.13"
+tar-codec = "0.0.15"
+tokio = { version = "1.54.1", features = ["rt", "io-util"] }
+
+[build-dependencies]
+napi-build = "2.6.0"
+
+[lib]
+crate-type = ["cdylib"]

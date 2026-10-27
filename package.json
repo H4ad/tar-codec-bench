@@ -1,0 +1,20 @@
+{
+  "name": "tar-codec-bench",
+  "version": "1.0.0",
+  "description": "Benchmark of astral tar-codec against node-tar on npm-shaped tarballs",
+  "scripts": {
+    "build": "bash scripts/build-addon.sh",
+    "page": "node page.mjs",
+    "corpus": "node gen.js && node fetch-corpus.js",
+    "bench": "node bench.js 7",
+    "bench:tgz": "node bench-e2e.js 5",
+    "bench:install": "node fetch-tree.js 150 && node bench-install.js 4",
+    "bench:memory": "node mem-driver.js",
+    "verify": "node verify.js lodash typescript eslint many-small few-large",
+    "fidelity": "node fidelity.js"
+  },
+  "dependencies": {
+    "tar": "7.5.22"
+  },
+  "license": "MIT"
+}
