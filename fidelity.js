@@ -6,10 +6,11 @@ const { execFileSync } = require('child_process')
 const tar = require('tar')
 const codec = require(ROOT + '/tarcodec.node')
 
-const T = ROOT + '/work/fidelity'
+const { WORK } = require('./lib/work')
+const T = WORK + '/fidelity'
 const src = T + '/src/package'
 const archive = T + '/fidelity.tar'
-const W = ROOT + '/work/fidelity'
+const W = T
 
 const x = (buf, dest) => new Promise((res, rej) => {
   const p = tar.x({ cwd: dest, strict: true }); p.on('close', res); p.on('error', rej); p.end(buf)

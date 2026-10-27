@@ -252,31 +252,35 @@
   </div>
   <h1>node-tar <span class="vs">vs</span> tar-codec</h1>
   <p class="lede">
-    Astral's Rust tar parser is <b>7 to 11 times faster</b> at extracting npm-shaped
-    tarballs, needs <b>1 MB of resident memory instead of 190</b>, and still cannot replace
-    node-tar in npm without four behaviour changes and a native build for every
-    platform. Measured through a napi addon, against the real tarballs npm ships.
+    Astral's Rust tar parser extracts npm-shaped tarballs with hundreds to thousands of
+    entries <b>5.3 to 7.8 times faster</b> than node-tar once both sides restore
+    file modes and mtimes, and
+    4.2 times faster end to end on an install-shaped run. Peak memory
+    for a 10k-entry archive is <b>+2 MB against
+    +191 MB</b>. It still cannot replace node-tar in npm
+    without eight gaps and a native build for every platform. Measured through a napi addon,
+    against the real tarballs npm ships.
   </p>
   <div class="ledger">
     <div>
       <div class="k label">extract speed</div>
-      <div class="big">7.0&ndash;11.4<span class="dim">x</span></div>
-      <div class="sub">82.3 ms &rarr; 10.9 ms, lodash</div>
+      <div class="big">5.3&ndash;7.8<span class="dim">x</span></div>
+      <div class="sub">77.2 ms &rarr; 14.7 ms, lodash, modes restored</div>
     </div>
     <div>
       <div class="k label">peak memory</div>
-      <div class="big">190 &rarr; 1<span class="dim"> MB</span></div>
+      <div class="big">191 &rarr; 2<span class="dim"> MB</span></div>
       <div class="sub">10k files, one extraction</div>
     </div>
     <div>
       <div class="k label">install footprint</div>
-      <div class="big">2.9 &rarr; 1.7<span class="dim"> MB</span></div>
+      <div class="big">2.99 &rarr; 1.83<span class="dim"> MB</span></div>
       <div class="sub">6 JS packages, or one binary</div>
     </div>
     <div>
       <div class="k label">feature parity</div>
-      <div class="big">4 <span class="dim">blockers</span></div>
-      <div class="sub">modes, mtimes, links, vendors</div>
+      <div class="big">8 <span class="dim">gaps</span></div>
+      <div class="sub">4 fidelity, 4 API</div>
     </div>
   </div>
 </header>
@@ -287,9 +291,10 @@
     <span class="sec-num">01</span>
     <h2>Speed</h2>
     <p>
-      Every corpus is extracted into a fresh directory, seven times, alternating
-      order. Both sides produce byte-identical trees: same paths, sizes, exec bits
-      and sha256.
+      Every corpus is extracted into a fresh directory, 7 times, alternating
+      order. Before timing, bench.js extracts both sides and compares path, size, exec bit
+      and sha256; the standalone verify run reported 0 content differences and
+      0 metadata differences across 5 corpora.
     </p>
   </div>
 
@@ -300,7 +305,7 @@
       <span class="scalenote">per-row scale</span>
     </div>
 
-    <p class="cap">Uncompressed tar, extract to disk. Median of 7, milliseconds.</p>
+    <p class="cap">Uncompressed tar, extract to disk, tar-codec's own output semantics. Median of 7, milliseconds.</p>
 
     <div class="scroll">
 
@@ -317,41 +322,106 @@
         <tr>
           <td class="name">lodash<small>2.2 MB</small></td>
           <td class="num" data-label="entries">1,051</td>
-          <td class="figcell" data-label="node-tar / tar-codec, ms"><div class="m"><span class="track"><i class="tar" style="--w:100.0%"></i></span><span class="v">82.3</span></div>
-        <div class="m"><span class="track"><i class="codec" style="--w:13.2%"></i></span><span class="v">10.9</span></div></td>
+          <td class="figcell" data-label="node-tar / tar-codec, ms"><div class="m"><span class="track"><i class="tar" style="--w:100.0%"></i></span><span class="v">78.9</span></div>
+        <div class="m"><span class="track"><i class="codec" style="--w:13.1%"></i></span><span class="v">10.3</span></div></td>
           <td class="num" data-label="speedup"><span class="win">7.6x</span></td>
         </tr>
         <tr>
           <td class="name">typescript<small>2.7 MB</small></td>
           <td class="num" data-label="entries">416</td>
-          <td class="figcell" data-label="node-tar / tar-codec, ms"><div class="m"><span class="track"><i class="tar" style="--w:100.0%"></i></span><span class="v">54.7</span></div>
-        <div class="m"><span class="track"><i class="codec" style="--w:11.2%"></i></span><span class="v">6.14</span></div></td>
+          <td class="figcell" data-label="node-tar / tar-codec, ms"><div class="m"><span class="track"><i class="tar" style="--w:100.0%"></i></span><span class="v">52.1</span></div>
+        <div class="m"><span class="track"><i class="codec" style="--w:11.3%"></i></span><span class="v">5.88</span></div></td>
           <td class="num" data-label="speedup"><span class="win">8.9x</span></td>
         </tr>
         <tr>
           <td class="name">eslint<small>3.1 MB</small></td>
           <td class="num" data-label="entries">421</td>
-          <td class="figcell" data-label="node-tar / tar-codec, ms"><div class="m"><span class="track"><i class="tar" style="--w:100.0%"></i></span><span class="v">49.5</span></div>
-        <div class="m"><span class="track"><i class="codec" style="--w:14.4%"></i></span><span class="v">7.12</span></div></td>
-          <td class="num" data-label="speedup"><span class="win">7.0x</span></td>
+          <td class="figcell" data-label="node-tar / tar-codec, ms"><div class="m"><span class="track"><i class="tar" style="--w:100.0%"></i></span><span class="v">48.8</span></div>
+        <div class="m"><span class="track"><i class="codec" style="--w:12.4%"></i></span><span class="v">6.06</span></div></td>
+          <td class="num" data-label="speedup"><span class="win">8.1x</span></td>
         </tr>
         <tr>
           <td class="name">synthetic, 10k small files<small>14.7 MB</small></td>
           <td class="num" data-label="entries">10,102</td>
-          <td class="figcell" data-label="node-tar / tar-codec, ms"><div class="m"><span class="track"><i class="tar" style="--w:100.0%"></i></span><span class="v">1113.6</span></div>
-        <div class="m"><span class="track"><i class="codec" style="--w:8.8%"></i></span><span class="v">97.8</span></div></td>
-          <td class="num" data-label="speedup"><span class="win">11.4x</span></td>
+          <td class="figcell" data-label="node-tar / tar-codec, ms"><div class="m"><span class="track"><i class="tar" style="--w:100.0%"></i></span><span class="v">967.3</span></div>
+        <div class="m"><span class="track"><i class="codec" style="--w:9.4%"></i></span><span class="v">90.8</span></div></td>
+          <td class="num" data-label="speedup"><span class="win">10.7x</span></td>
         </tr>
         <tr>
           <td class="name">synthetic, 50 x 200 KB<small>9.8 MB</small></td>
           <td class="num" data-label="entries">53</td>
-          <td class="figcell" data-label="node-tar / tar-codec, ms"><div class="m"><span class="track"><i class="tar" style="--w:100.0%"></i></span><span class="v">6.95</span></div>
-        <div class="m"><span class="track"><i class="codec" style="--w:94.1%"></i></span><span class="v">6.54</span></div></td>
+          <td class="figcell" data-label="node-tar / tar-codec, ms"><div class="m"><span class="track"><i class="tar" style="--w:100.0%"></i></span><span class="v">5.38</span></div>
+        <div class="m"><span class="track"><i class="codec" style="--w:98.9%"></i></span><span class="v">5.32</span></div></td>
+          <td class="num" data-label="speedup"><span class="lose">1.0x</span></td>
+        </tr>
+      </tbody>
+    </table>
+    </div>
+
+    <p class="cap">Same corpora with the work equalized: node-tar skips mode and mtime restore, tar-codec gets a pass that restores both. Median of 7, milliseconds.</p>
+
+    <div class="scroll">
+
+    <table aria-label="extract speed, modes and mtimes restored">
+      <thead>
+        <tr>
+          <th>corpus</th>
+          <th class="num">entries</th>
+          <th>node-tar noChmod/noMtime / tar-codec + metadata pass</th>
+          <th class="num">speedup</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="name">lodash<small>2.2 MB</small></td>
+          <td class="num" data-label="entries">1,051</td>
+          <td class="figcell" data-label="node-tar / tar-codec, ms"><div class="m"><span class="track"><i class="tar" style="--w:100.0%"></i></span><span class="v">77.2</span></div>
+        <div class="m"><span class="track"><i class="codec" style="--w:19.0%"></i></span><span class="v">14.7</span></div></td>
+          <td class="num" data-label="speedup"><span class="win">5.3x</span></td>
+        </tr>
+        <tr>
+          <td class="name">typescript<small>2.7 MB</small></td>
+          <td class="num" data-label="entries">416</td>
+          <td class="figcell" data-label="node-tar / tar-codec, ms"><div class="m"><span class="track"><i class="tar" style="--w:100.0%"></i></span><span class="v">50.1</span></div>
+        <div class="m"><span class="track"><i class="codec" style="--w:15.2%"></i></span><span class="v">7.59</span></div></td>
+          <td class="num" data-label="speedup"><span class="win">6.6x</span></td>
+        </tr>
+        <tr>
+          <td class="name">eslint<small>3.1 MB</small></td>
+          <td class="num" data-label="entries">421</td>
+          <td class="figcell" data-label="node-tar / tar-codec, ms"><div class="m"><span class="track"><i class="tar" style="--w:100.0%"></i></span><span class="v">47.8</span></div>
+        <div class="m"><span class="track"><i class="codec" style="--w:16.4%"></i></span><span class="v">7.85</span></div></td>
+          <td class="num" data-label="speedup"><span class="win">6.1x</span></td>
+        </tr>
+        <tr>
+          <td class="name">synthetic, 10k small files<small>14.7 MB</small></td>
+          <td class="num" data-label="entries">10,102</td>
+          <td class="figcell" data-label="node-tar / tar-codec, ms"><div class="m"><span class="track"><i class="tar" style="--w:100.0%"></i></span><span class="v">987.4</span></div>
+        <div class="m"><span class="track"><i class="codec" style="--w:12.8%"></i></span><span class="v">126.8</span></div></td>
+          <td class="num" data-label="speedup"><span class="win">7.8x</span></td>
+        </tr>
+        <tr>
+          <td class="name">synthetic, 50 x 200 KB<small>9.8 MB</small></td>
+          <td class="num" data-label="entries">53</td>
+          <td class="figcell" data-label="node-tar / tar-codec, ms"><div class="m"><span class="track"><i class="tar" style="--w:100.0%"></i></span><span class="v">5.48</span></div>
+        <div class="m"><span class="track"><i class="codec" style="--w:95.2%"></i></span><span class="v">5.22</span></div></td>
           <td class="num" data-label="speedup"><span class="lose">1.1x</span></td>
         </tr>
       </tbody>
     </table>
     </div>
+
+    <p class="note" style="margin-top:1rem">
+      The first table compares different jobs. Forcing node-tar to skip modes and mtimes moves
+      lodash by 1.6 ms
+      (78.9 to 77.2); adding the same pass to tar-codec costs
+      4.4 ms
+      (10.3 to 14.7). With both sides doing the work the
+      ratio is 5.3 to 7.8x, not 7.6 to 10.7x. tar-codec 0.0.15
+      exposes neither mode nor mtime, so the codec pass reads them from node-tar's listing and
+      applies them in JS, which makes it an upper bound on the codec side. verify.js checks the
+      result against node-tar's modes and mtimes and reports 0 differences.
+    </p>
 
     <p class="cap">Uncompressed tar, parse only, no files written. Median of 7, milliseconds.</p>
 
@@ -370,43 +440,43 @@
         <tr>
           <td class="name">lodash<small>2.2 MB</small></td>
           <td class="num" data-label="entries">1,051</td>
-          <td class="figcell" data-label="node-tar / tar-codec, ms"><div class="m"><span class="track"><i class="tar" style="--w:100.0%"></i></span><span class="v">9.04</span></div>
-        <div class="m"><span class="track"><i class="codec" style="--w:14.3%"></i></span><span class="v">1.29</span></div></td>
-          <td class="num" data-label="speedup"><span class="win">7.0x</span></td>
+          <td class="figcell" data-label="node-tar / tar-codec, ms"><div class="m"><span class="track"><i class="tar" style="--w:100.0%"></i></span><span class="v">5.41</span></div>
+        <div class="m"><span class="track"><i class="codec" style="--w:21.9%"></i></span><span class="v">1.18</span></div></td>
+          <td class="num" data-label="speedup"><span class="win">4.6x</span></td>
         </tr>
         <tr>
           <td class="name">typescript<small>2.7 MB</small></td>
           <td class="num" data-label="entries">416</td>
-          <td class="figcell" data-label="node-tar / tar-codec, ms"><div class="m"><span class="track"><i class="tar" style="--w:100.0%"></i></span><span class="v">2.45</span></div>
-        <div class="m"><span class="track"><i class="codec" style="--w:31.0%"></i></span><span class="v">0.76</span></div></td>
-          <td class="num" data-label="speedup"><span class="win">3.2x</span></td>
+          <td class="figcell" data-label="node-tar / tar-codec, ms"><div class="m"><span class="track"><i class="tar" style="--w:100.0%"></i></span><span class="v">1.96</span></div>
+        <div class="m"><span class="track"><i class="codec" style="--w:28.9%"></i></span><span class="v">0.57</span></div></td>
+          <td class="num" data-label="speedup"><span class="win">3.5x</span></td>
         </tr>
         <tr>
           <td class="name">eslint<small>3.1 MB</small></td>
           <td class="num" data-label="entries">421</td>
-          <td class="figcell" data-label="node-tar / tar-codec, ms"><div class="m"><span class="track"><i class="tar" style="--w:100.0%"></i></span><span class="v">2.3</span></div>
-        <div class="m"><span class="track"><i class="codec" style="--w:32.2%"></i></span><span class="v">0.74</span></div></td>
-          <td class="num" data-label="speedup"><span class="win">3.1x</span></td>
+          <td class="figcell" data-label="node-tar / tar-codec, ms"><div class="m"><span class="track"><i class="tar" style="--w:100.0%"></i></span><span class="v">2.02</span></div>
+        <div class="m"><span class="track"><i class="codec" style="--w:31.4%"></i></span><span class="v">0.63</span></div></td>
+          <td class="num" data-label="speedup"><span class="win">3.2x</span></td>
         </tr>
         <tr>
           <td class="name">synthetic, 10k small files<small>14.7 MB</small></td>
           <td class="num" data-label="entries">10,102</td>
-          <td class="figcell" data-label="node-tar / tar-codec, ms"><div class="m"><span class="track"><i class="tar" style="--w:100.0%"></i></span><span class="v">55.5</span></div>
-        <div class="m"><span class="track"><i class="codec" style="--w:17.5%"></i></span><span class="v">9.71</span></div></td>
-          <td class="num" data-label="speedup"><span class="win">5.7x</span></td>
+          <td class="figcell" data-label="node-tar / tar-codec, ms"><div class="m"><span class="track"><i class="tar" style="--w:100.0%"></i></span><span class="v">47.8</span></div>
+        <div class="m"><span class="track"><i class="codec" style="--w:18.8%"></i></span><span class="v">8.99</span></div></td>
+          <td class="num" data-label="speedup"><span class="win">5.3x</span></td>
         </tr>
         <tr>
           <td class="name">synthetic, 50 x 200 KB<small>9.8 MB</small></td>
           <td class="num" data-label="entries">53</td>
-          <td class="figcell" data-label="node-tar / tar-codec, ms"><div class="m"><span class="track"><i class="tar" style="--w:55.7%"></i></span><span class="v">0.39</span></div>
-        <div class="m"><span class="track"><i class="codec" style="--w:100.0%"></i></span><span class="v">0.7</span></div></td>
-          <td class="num" data-label="speedup"><span class="lose">0.6x</span></td>
+          <td class="figcell" data-label="node-tar / tar-codec, ms"><div class="m"><span class="track"><i class="tar" style="--w:84.3%"></i></span><span class="v">0.27</span></div>
+        <div class="m"><span class="track"><i class="codec" style="--w:100.0%"></i></span><span class="v">0.32</span></div></td>
+          <td class="num" data-label="speedup"><span class="lose">0.8x</span></td>
         </tr>
       </tbody>
     </table>
     </div>
 
-    <p class="cap">.tgz end to end, one archive at a time. node-tar inflates its own input; tar-codec gets gunzipSync output, and that cost is included.</p>
+    <p class="cap">.tgz end to end, one archive at a time. node-tar inflates its own input; tar-codec gets gunzipSync output, and that cost is included. Median of 5.</p>
 
     <div class="scroll">
 
@@ -422,45 +492,55 @@
       <tbody>
         <tr>
           <td class="name">lodash</td>
-          <td class="num" data-label="gunzip">2.5 ms</td>
-          <td class="figcell" data-label="node-tar / tar-codec, ms"><div class="m"><span class="track"><i class="tar" style="--w:100.0%"></i></span><span class="v">89</span></div>
-        <div class="m"><span class="track"><i class="codec" style="--w:14.6%"></i></span><span class="v">13</span></div></td>
-          <td class="num" data-label="speedup"><span class="win">6.8x</span></td>
+          <td class="num" data-label="gunzip">2.9 ms</td>
+          <td class="figcell" data-label="node-tar / tar-codec, ms"><div class="m"><span class="track"><i class="tar" style="--w:100.0%"></i></span><span class="v">85.9</span></div>
+        <div class="m"><span class="track"><i class="codec" style="--w:15.7%"></i></span><span class="v">13.5</span></div></td>
+          <td class="num" data-label="speedup"><span class="win">6.4x</span></td>
         </tr>
         <tr>
           <td class="name">typescript</td>
-          <td class="num" data-label="gunzip">2.9 ms</td>
-          <td class="figcell" data-label="node-tar / tar-codec, ms"><div class="m"><span class="track"><i class="tar" style="--w:100.0%"></i></span><span class="v">60.2</span></div>
-        <div class="m"><span class="track"><i class="codec" style="--w:14.5%"></i></span><span class="v">8.7</span></div></td>
-          <td class="num" data-label="speedup"><span class="win">6.9x</span></td>
+          <td class="num" data-label="gunzip">2.7 ms</td>
+          <td class="figcell" data-label="node-tar / tar-codec, ms"><div class="m"><span class="track"><i class="tar" style="--w:100.0%"></i></span><span class="v">53.3</span></div>
+        <div class="m"><span class="track"><i class="codec" style="--w:15.8%"></i></span><span class="v">8.43</span></div></td>
+          <td class="num" data-label="speedup"><span class="win">6.3x</span></td>
         </tr>
         <tr>
           <td class="name">eslint</td>
-          <td class="num" data-label="gunzip">4.6 ms</td>
-          <td class="figcell" data-label="node-tar / tar-codec, ms"><div class="m"><span class="track"><i class="tar" style="--w:100.0%"></i></span><span class="v">61.7</span></div>
-        <div class="m"><span class="track"><i class="codec" style="--w:18.2%"></i></span><span class="v">11.2</span></div></td>
-          <td class="num" data-label="speedup"><span class="win">5.5x</span></td>
+          <td class="num" data-label="gunzip">4.1 ms</td>
+          <td class="figcell" data-label="node-tar / tar-codec, ms"><div class="m"><span class="track"><i class="tar" style="--w:100.0%"></i></span><span class="v">57.6</span></div>
+        <div class="m"><span class="track"><i class="codec" style="--w:17.9%"></i></span><span class="v">10.3</span></div></td>
+          <td class="num" data-label="speedup"><span class="win">5.6x</span></td>
         </tr>
         <tr>
           <td class="name">synthetic, 10k small files</td>
-          <td class="num" data-label="gunzip">29.4 ms</td>
-          <td class="figcell" data-label="node-tar / tar-codec, ms"><div class="m"><span class="track"><i class="tar" style="--w:100.0%"></i></span><span class="v">1112.4</span></div>
-        <div class="m"><span class="track"><i class="codec" style="--w:11.1%"></i></span><span class="v">123.8</span></div></td>
-          <td class="num" data-label="speedup"><span class="win">9.0x</span></td>
+          <td class="num" data-label="gunzip">27.6 ms</td>
+          <td class="figcell" data-label="node-tar / tar-codec, ms"><div class="m"><span class="track"><i class="tar" style="--w:100.0%"></i></span><span class="v">995.8</span></div>
+        <div class="m"><span class="track"><i class="codec" style="--w:11.8%"></i></span><span class="v">117.3</span></div></td>
+          <td class="num" data-label="speedup"><span class="win">8.5x</span></td>
         </tr>
       </tbody>
     </table>
     </div>
+
+    <p class="note" style="margin-top:0.9rem">
+      24 archives started at once: node-tar 863.3 ms, tar-codec
+      68.9 ms with gzip inside the addon
+      (12.53x). Pre-inflating the input would
+      report 15.12x, which is why that arm is not
+      the one quoted.
+    </p>
   </div>
 
   <div style="margin-top:2.6rem">
     <h3 style="font-size:1rem;margin:0 0 0.4rem">Where node-tar spends the time</h3>
     <p class="note">
-      Same 1051-file tree written by a plain <code>fs.writeFileSync</code> loop: 15.3 ms.
-      tar-codec extracts in 10.3 ms, so it sits at the filesystem floor. node-tar
-      takes 88.7 ms, which is per-entry stream and callback work, not I/O. That is
-      why the ratio survives on a real disk, and why the 53-entry corpus with
-      200 KB files shows no win at all.
+      Same 1051-file tree written by a plain <code>fs.writeFileSync</code> loop:
+      14.7 ms. tar-codec extracts in 10.1 ms, so it sits at
+      the filesystem floor on this work dir (tmpfs). node-tar takes
+      79.2 ms, which is per-entry stream and callback work, not I/O. Because
+      tar-codec is at the floor, the ratio shrinks on a slower filesystem; set
+      <code>TAR_BENCH_WORK</code> to a directory on a real disk and rerun to see the disk-bound
+      number.
     </p>
   </div>
 
@@ -480,41 +560,49 @@
       <tbody>
         <tr>
           <td class="name">node-tar, one at a time</td>
-          <td class="num" data-label="total">741 ms</td>
+          <td class="num" data-label="total">470 ms</td>
           <td class="num" data-label="vs node-tar, 8 in flight"><span class="lose">0.7x</span></td>
           <td class="why"></td>
         </tr>
         <tr>
           <td class="name">node-tar, 8 in flight</td>
-          <td class="num" data-label="total">496 ms</td>
+          <td class="num" data-label="total">322 ms</td>
           <td class="num" data-label="vs node-tar, 8 in flight"><span class="lose">1.0x</span></td>
           <td class="why">the shape pacote actually uses</td>
         </tr>
         <tr>
           <td class="name">tar-codec + JS gunzip, one at a time</td>
-          <td class="num" data-label="total">172 ms</td>
-          <td class="num" data-label="vs node-tar, 8 in flight"><span class="win">2.9x</span></td>
-          <td class="why">inflate 55 ms, extract 116 ms</td>
+          <td class="num" data-label="total">143 ms</td>
+          <td class="num" data-label="vs node-tar, 8 in flight"><span class="win">2.3x</span></td>
+          <td class="why">inflate 52 ms, extract 91 ms</td>
         </tr>
         <tr>
           <td class="name">tar-codec + async zlib, 8 in flight</td>
-          <td class="num" data-label="total">155 ms</td>
-          <td class="num" data-label="vs node-tar, 8 in flight"><span class="win">3.2x</span></td>
-          <td class="why">inflate 81 ms, extract 75 ms</td>
+          <td class="num" data-label="total">93 ms</td>
+          <td class="num" data-label="vs node-tar, 8 in flight"><span class="win">3.5x</span></td>
+          <td class="why">inflate 47 ms, extract 47 ms</td>
+        </tr>
+        <tr>
+          <td class="name">tar-codec, zlib-rs inside the addon, one at a time</td>
+          <td class="num" data-label="total">145 ms</td>
+          <td class="num" data-label="vs node-tar, 8 in flight"><span class="win">2.2x</span></td>
+          <td class="why">inflate 0 ms, extract 145 ms</td>
         </tr>
         <tr>
           <td class="name">tar-codec, zlib-rs inside the addon, 8 in flight</td>
-          <td class="num" data-label="total">106 ms</td>
-          <td class="num" data-label="vs node-tar, 8 in flight"><span class="win">4.7x</span></td>
+          <td class="num" data-label="total">76 ms</td>
+          <td class="num" data-label="vs node-tar, 8 in flight"><span class="win">4.2x</span></td>
           <td class="why">best arm, inflate included</td>
         </tr>
       </tbody>
     </table>
   </div>
   <p class="note" style="margin-top:0.9rem">
-    130 packages is about 0.50 s of extract work in node-tar at 8 in flight,
-    against 0.11 s for the best tar-codec arm. On a 500-package cold install
-    that is a couple of seconds, not a different install.
+    130 packages is about 0.32 s of extract work in node-tar at 8
+    in flight, against 0.08 s for the best tar-codec arm. Every arm writes the
+    same paths and bytes (the codec arms strip <code>package/</code> with a staging dir and a
+    rename, since tar-codec has no strip option) and each run is checked against the tar-1 tree.
+    On a 500-package cold install that is a couple of seconds, not a different install.
   </p>
 </section>
 
@@ -529,7 +617,7 @@
     </p>
   </div>
 
-  <p class="cap">Peak RSS in MB, median of 3 runs. Idle node is 59 to 72 MB and is excluded.</p>
+  <p class="cap">Peak RSS in MB, median of 3 process runs. Idle node is 57 to 72 MB and is excluded. The arm used for each row is named under the workload.</p>
 
   <div class="scroll">
 
@@ -545,47 +633,60 @@
       </thead>
       <tbody>
         <tr>
-          <td class="name">lodash, 5 extractions<small>2.2 MB tar, 1051 entries</small></td>
+          <td class="name">lodash, 1051 entries, 5 extractions<small>2.2 MB tar, 1051 entries &middot; codec</small></td>
           <td class="num" data-label="idle">59 MB</td>
           <td class="figcell" data-label="peak over idle"><div class="m"><span class="track"><i class="tar" style="--w:100.0%"></i></span></div>
-        <div class="m"><span class="track"><i class="codec" style="--w:3.4%"></i></span></div></td>
-          <td class="num" data-label="node-tar">+58 MB</td>
+        <div class="m"><span class="track"><i class="codec" style="--w:3.6%"></i></span></div></td>
+          <td class="num" data-label="node-tar">+55 MB</td>
           <td class="num" data-label="tar-codec">+2 MB</td>
         </tr>
         <tr>
-          <td class="name">10k files, 2 extractions<small>14.7 MB tar, 10102 entries</small></td>
-          <td class="num" data-label="idle">71 MB</td>
-          <td class="figcell" data-label="peak over idle"><div class="m"><span class="track"><i class="tar" style="--w:100.0%"></i></span></div>
-        <div class="m"><span class="track"><i class="codec" style="--w:1.5%"></i></span></div></td>
-          <td class="num" data-label="node-tar">+189 MB</td>
-          <td class="num" data-label="tar-codec">+2 MB</td>
-        </tr>
-        <tr>
-          <td class="name">lodash, 8 concurrent<small>2.2 MB tar, 1051 entries</small></td>
-          <td class="num" data-label="idle">59 MB</td>
-          <td class="figcell" data-label="peak over idle"><div class="m"><span class="track"><i class="tar" style="--w:100.0%"></i></span></div>
-        <div class="m"><span class="track"><i class="codec" style="--w:1.5%"></i></span></div></td>
-          <td class="num" data-label="node-tar">+244 MB</td>
-          <td class="num" data-label="tar-codec">+2 MB</td>
-        </tr>
-        <tr>
-          <td class="name">10k files, 8 concurrent<small>14.7 MB tar, 10102 entries</small></td>
+          <td class="name">10k files, 2 extractions<small>14.7 MB tar, 10102 entries &middot; codec</small></td>
           <td class="num" data-label="idle">72 MB</td>
           <td class="figcell" data-label="peak over idle"><div class="m"><span class="track"><i class="tar" style="--w:100.0%"></i></span></div>
         <div class="m"><span class="track"><i class="codec" style="--w:1.5%"></i></span></div></td>
-          <td class="num" data-label="node-tar">+1029 MB</td>
-          <td class="num" data-label="tar-codec">+1 MB</td>
+          <td class="num" data-label="node-tar">+191 MB</td>
+          <td class="num" data-label="tar-codec">+2 MB</td>
+        </tr>
+        <tr>
+          <td class="name">lodash.tgz, 5 extractions<small>315 KB tgz, 1051 entries &middot; codec-gz</small></td>
+          <td class="num" data-label="idle">57 MB</td>
+          <td class="figcell" data-label="peak over idle"><div class="m"><span class="track"><i class="tar" style="--w:100.0%"></i></span></div>
+        <div class="m"><span class="track"><i class="codec" style="--w:10.2%"></i></span></div></td>
+          <td class="num" data-label="node-tar">+59 MB</td>
+          <td class="num" data-label="tar-codec">+6 MB</td>
+        </tr>
+        <tr>
+          <td class="name">lodash, 8 concurrent<small>2.2 MB tar, 1051 entries &middot; codec-async</small></td>
+          <td class="num" data-label="idle">60 MB</td>
+          <td class="figcell" data-label="peak over idle"><div class="m"><span class="track"><i class="tar" style="--w:100.0%"></i></span></div>
+        <div class="m"><span class="track"><i class="codec" style="--w:13.8%"></i></span></div></td>
+          <td class="num" data-label="node-tar">+225 MB</td>
+          <td class="num" data-label="tar-codec">+31 MB</td>
+        </tr>
+        <tr>
+          <td class="name">10k files, 8 concurrent<small>14.7 MB tar, 10102 entries &middot; codec-async</small></td>
+          <td class="num" data-label="idle">72 MB</td>
+          <td class="figcell" data-label="peak over idle"><div class="m"><span class="track"><i class="tar" style="--w:100.0%"></i></span></div>
+        <div class="m"><span class="track"><i class="codec" style="--w:17.8%"></i></span></div></td>
+          <td class="num" data-label="node-tar">+1028 MB</td>
+          <td class="num" data-label="tar-codec">+183 MB</td>
         </tr>
       </tbody>
     </table>
   </div>
   <p class="note" style="margin-top:0.9rem">
-    The async wrapper (needed so pacote can keep eight extractions in flight) costs
-    one copy of the archive per task: +65 MB at 8 concurrent 10k-file archives,
-    against +2 MB for the blocking call. That copy is avoidable by sharing the
-    buffer or reading from a file handle. The 1101 MB node-tar figure is not a
-    typo: eight concurrent unpacks of a 10102-entry archive hold roughly a gigabyte
-    of live stream buffers.
+    The concurrent rows chart the async arm, because a blocking napi call cannot overlap: eight
+    of them run one after another in a single tick. On the 10k archive the blocking call peaks at
+    +2 MB, against
+    +183 MB for the async arm that actually overlaps, and
+    node-tar peaks at +1028 MB holding eight in flight. The
+    async wrapper copies the archive per task, which is most of its peak; that copy is avoidable
+    by sharing the buffer or reading from a file handle. Peak ranges across
+    3 runs: node-tar 1099 to
+    1107 MB, tar-codec 254 to
+    255 MB. The chart is peak over idle, not the retained delta
+    after the directories are removed.
   </p>
 </section>
 
@@ -603,8 +704,8 @@
   <div class="sizes">
     <div class="size-compare">
       <div class="size-row">
-        <div class="size-label"><span>node-tar</span><span class="v">2.85 MB &middot; 6 packages</span></div>
-        <div class="size-bar" role="img" aria-label="node-tar 2.85 MB">
+        <div class="size-label"><span>node-tar</span><span class="v">2.99 MB &middot; 6 packages</span></div>
+        <div class="size-bar" role="img" aria-label="node-tar 2.99 MB">
           <span style="width:77.0%;background:oklch(0.66 0.090 176)" title="tar: 2298662 bytes"></span><span style="width:12.3%;background:oklch(0.71 0.080 176)" title="minipass: 366791 bytes"></span><span style="width:3.9%;background:oklch(0.75 0.068 176)" title="minizlib: 117811 bytes"></span><span style="width:3.4%;background:oklch(0.79 0.055 176)" title="@isaacs/fs-minipass: 100617 bytes"></span><span style="width:2.7%;background:oklch(0.83 0.042 176)" title="yallist: 80297 bytes"></span><span style="width:0.7%;background:oklch(0.86 0.030 176)" title="chownr: 22048 bytes"></span>
         </div>
         <ul class="size-legend">
@@ -617,22 +718,22 @@
         </ul>
       </div>
       <div class="size-row">
-        <div class="size-label"><span>tar-codec</span><span class="v">1.74 MB &middot; 1 binary</span></div>
-        <div class="size-bar" role="img" aria-label="tar-codec addon 1.74 MB">
+        <div class="size-label"><span>tar-codec</span><span class="v">1.83 MB &middot; 1 binary</span></div>
+        <div class="size-bar" role="img" aria-label="tar-codec addon 1.83 MB">
           <span style="width:61.1%;background:var(--codec)" title="tarcodec.node: 1825664 bytes"></span>
         </div>
-        <p class="size-note">One <code>tarcodec.node</code>, 629 KB gzipped on the wire. The other seven platform builds exist in the registry but never reach this machine.</p>
+        <p class="size-note">One <code>tarcodec.node</code>, 644 KB gzipped on the wire. The other seven platform builds exist in the registry but never reach this machine.</p>
       </div>
     </div>
 
     <dl class="facts">
       <div>
         <dt>node-tar 7.5.22</dt>
-        <dd><b>2.85 MB</b> unpacked, <b>322</b> files, <b>6</b> packages, no native code. Downloads and runs anywhere node does.</dd>
+        <dd><b>2.99 MB</b> unpacked, <b>322</b> files, <b>6</b> packages, no native code. Downloads and runs anywhere node does.</dd>
       </div>
       <div>
         <dt>tar-codec addon</dt>
-        <dd><b>1.74 MB</b> per platform, <b>629 KB</b> gzipped. 79 crates in the lockfile at build time, none at runtime. Eight platform builds is about <b>14 MB</b> of published artifacts; a user downloads one.</dd>
+        <dd><b>1.83 MB</b> per platform, <b>644 KB</b> gzipped. 79 crates in the lockfile at build time, none at runtime. Eight platform builds is about <b>14 MB</b> of published artifacts; a user downloads one.</dd>
       </div>
       <div>
         <dt>The part that is not in the number</dt>
@@ -647,8 +748,8 @@
     <span class="sec-num">04</span>
     <h2>Features</h2>
     <p>
-      Tested, not read off a README. The four blockers are the ones that change
-      what ends up on disk; the rest are work to schedule.
+      Tested, not read off a README. The four fidelity gaps are the ones that change
+      what ends up on disk; the other four are API work to schedule.
     </p>
   </div>
 
@@ -822,17 +923,19 @@
     <div class="codec">
       <h3>What tar-codec buys</h3>
       <p>
-        Seven to eleven times the extract throughput on packages with hundreds to
-        thousands of files, with no heap growth and a parser that rejects the
-        family-mixing and tombstone tricks the blog post describes.
+        5.3 to 7.8 times the extract throughput on packages with hundreds to
+        thousands of files once both sides restore modes and mtimes, and
+        7.6 to 10.7 times when tar-codec's own output semantics are accepted. No
+        heap growth, and a parser that rejects the family-mixing and tombstone tricks the blog
+        post describes.
       </p>
     </div>
     <div class="tar">
       <h3>What it costs</h3>
       <p>
-        A native build matrix, a fallback path, a second wrapper for pack and
-        publish, and four behaviour changes that users would notice in file modes
-        and mtimes.
+        A native build matrix, a fallback path, a second wrapper for pack and publish, and eight
+        gaps: four fidelity changes users would notice in modes, mtimes, links and vendor records,
+        plus strip, filter, mode metadata and a writer.
       </p>
     </div>
     <div>
@@ -868,17 +971,20 @@
 <footer>
   <div class="label">Method</div>
   <p>
-    Ryzen 9 5950X, 32 threads, tmpfs, Linux x64. node v24.20.0, node-tar 7.5.22, tar-codec 0.0.15. Medians of 7 for raw tar, 5 for .tgz, 4 for the install
-    closure, 3 process runs for memory. Corpora: lodash 4.18.1, typescript 7.0.2,
-    eslint 10.13.0, two generated pax tarballs, and the latest versions of a real
-    dependency closure pulled from the registry. The addon is a napi-rs cdylib over
+    h4ad (AMD Ryzen 9 5950X 16-Core Processor, 32 threads), tmpfs work dir, linux x64. v24.20.0, node-tar 7.5.22, tar-codec 0.0.15. Work dir <code>/tmp/tar-codec-bench-work</code> on tmpfs. Medians of
+    7 for raw tar, 5 for .tgz, 4
+    for the install closure, 3 process runs for memory. Every number on this
+    page is read from <code>results/*.json</code>, written by the benchmark that produced it;
+    <code>npm run all</code> reruns the set and regenerates this page. Corpora: lodash,
+    typescript and eslint pinned in <code>fetch-corpus.js</code>, two generated pax tarballs, and
+    a real dependency closure pulled from the registry. The addon is a napi-rs cdylib over
     tar-codec 0.0.15 with flate2/zlib-rs for the gzip arm; source and scripts sit
-    next to this page. tmpfs absolutes will be lower than a real disk; ratios track
-    per-entry cost, not I/O.
+    next to this page. Absolute times on tmpfs will be lower than a real disk, and because
+    tar-codec runs at the write floor the ratio shrinks on a slower filesystem.
   </p>
   <p>
-    node-tar install sizes come from registry metadata. Everything else is measured
-    on this machine, including the fidelity test and the vendor-record rejection.
+    node-tar install sizes come from registry metadata. Everything else is measured on this
+    machine, including the fidelity test and the vendor-record rejection.
   </p>
 </footer>
 </div>

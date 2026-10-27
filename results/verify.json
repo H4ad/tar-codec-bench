@@ -1,0 +1,73 @@
+{
+ "date": "2026-10-27T22:28:13.947Z",
+ "machine": "h4ad (AMD Ryzen 9 5950X 16-Core Processor, 32 threads)",
+ "platform": "linux x64",
+ "node": "v24.20.0",
+ "nodeTar": "7.5.22",
+ "tarCodec": "0.0.15",
+ "workDir": "/tmp/tar-codec-bench-work",
+ "workFs": "tmpfs",
+ "corpora": [
+  {
+   "name": "lodash",
+   "entriesTar": 1053,
+   "entriesCodec": 1053,
+   "diffs": 0,
+   "examples": [],
+   "metadata": {
+    "entries": 1051,
+    "diffs": 0,
+    "examples": []
+   }
+  },
+  {
+   "name": "typescript",
+   "entriesTar": 434,
+   "entriesCodec": 434,
+   "diffs": 0,
+   "examples": [],
+   "metadata": {
+    "entries": 416,
+    "diffs": 0,
+    "examples": []
+   }
+  },
+  {
+   "name": "eslint",
+   "entriesTar": 443,
+   "entriesCodec": 443,
+   "diffs": 0,
+   "examples": [],
+   "metadata": {
+    "entries": 421,
+    "diffs": 0,
+    "examples": []
+   }
+  },
+  {
+   "name": "many-small",
+   "entriesTar": 10102,
+   "entriesCodec": 10102,
+   "diffs": 0,
+   "examples": [],
+   "metadata": {
+    "entries": 10102,
+    "diffs": 0,
+    "examples": []
+   }
+  },
+  {
+   "name": "few-large",
+   "entriesTar": 53,
+   "entriesCodec": 53,
+   "diffs": 0,
+   "examples": [],
+   "metadata": {
+    "entries": 53,
+    "diffs": 0,
+    "examples": []
+   }
+  }
+ ],
+ "ok": true
+}

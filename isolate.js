@@ -8,7 +8,8 @@ const tar = require('tar')
 const codec = require(ROOT + '/tarcodec.node')
 
 const C = ROOT + '/corpus'
-const W = ROOT + '/work'
+const { WORK } = require('./lib/work')
+const W = WORK + '/isolate'
 const fresh = d => { fs.rmSync(d, { recursive: true, force: true }); fs.mkdirSync(d, { recursive: true }) }
 const med = a => [...a].sort((x, y) => x - y)[Math.floor(a.length / 2)]
 

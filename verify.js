@@ -1,39 +1,41 @@
-// Verify both extractors produce identical trees (path, size, sha256, exec bit).
+// Verify both extractors produce identical trees (path, size, sha256, exec bit),
+// and that the codec-plus-metadata arm restores the same modes and mtimes
+// node-tar does. This is the same content check bench.js runs before timing.
 const ROOT = __dirname
-const crypto = require('crypto')
 const fs = require('fs')
 const path = require('path')
 const tar = require('tar')
 const codec = require(ROOT + '/tarcodec.node')
-
-const walk = (root, rel = '', acc = new Map()) => {
-  for (const ent of fs.readdirSync(path.join(root, rel), { withFileTypes: true })) {
-    const r = rel ? `${rel}/${ent.name}` : ent.name
-    if (ent.isDirectory()) { acc.set(r + '/', 'dir'); walk(root, r, acc) } else if (ent.isSymbolicLink()) acc.set(r, 'link:' + fs.readlinkSync(path.join(root, r)))
-    else {
-      const st = fs.statSync(path.join(root, r))
-      const h = crypto.createHash('sha256').update(fs.readFileSync(path.join(root, r))).digest('hex').slice(0, 12)
-      acc.set(r, `${st.size}:${(st.mode & 0o111) ? 'x' : '-'}:${h}`)
-    }
-  }
-  return acc
-}
+const { WORK, fresh } = require('./lib/work')
+const tree = require('./lib/tree')
+const metaLib = require('./lib/meta')
+const results = require('./lib/results')
 
 ;(async () => {
-  for (const name of process.argv.slice(2)) {
+  const corpora = process.argv.slice(2)
+  const rows = []
+  for (const name of corpora) {
     const buf = fs.readFileSync(`${ROOT}/corpus/${name}.tar`)
-    const a = `${ROOT}/work/v-tar-${name}`
-    const b = `${ROOT}/work/v-codec-${name}`
-    for (const d of [a, b]) { fs.rmSync(d, { recursive: true, force: true }); fs.mkdirSync(d, { recursive: true }) }
+    const meta = await metaLib.read(buf)
+    const a = path.join(WORK, 'v-tar-' + name)
+    const b = path.join(WORK, 'v-codec-' + name)
+    const c = path.join(WORK, 'v-codec-meta-' + name)
+    for (const d of [a, b, c]) fresh(d)
     await new Promise((res, rej) => {
       const p = tar.x({ cwd: a, strict: true }); p.on('close', res); p.on('error', rej); p.end(buf)
     })
     codec.extract(buf, b, true)
-    const ma = walk(a); const mb = walk(b)
-    let diff = 0
-    for (const [k, v] of ma) if (mb.get(k) !== v) { if (diff++ < 5) console.log(`  diff ${k}: tar=${v} codec=${mb.get(k)}`) }
-    for (const k of mb.keys()) if (!ma.has(k)) { if (diff++ < 5) console.log(`  extra in codec: ${k}`) }
-    console.log(`${name}: tar ${ma.size} entries, codec ${mb.size} entries, diffs=${diff}`)
-    for (const d of [a, b]) fs.rmSync(d, { recursive: true, force: true })
+    codec.extract(buf, c, true)
+    metaLib.apply(c, meta)
+    const cmp = tree.compare(a, b)
+    const metaCmp = metaLib.compare(a, c, meta)
+    rows.push({ name, ...cmp, metadata: metaCmp })
+    for (const d of cmp.examples.slice(0, 5)) console.log(`  diff ${d.path}: tar=${d.tar} codec=${d.codec}`)
+    for (const d of metaCmp.examples.slice(0, 5)) console.log(`  meta ${d.path}: tar=${d.tarMode}/${d.tarMtime} codec=${d.codecMode}/${d.codecMtime}`)
+    console.log(`${name}: tar ${cmp.entriesTar} entries, codec ${cmp.entriesCodec} entries, content diffs=${cmp.diffs}, metadata diffs=${metaCmp.diffs}`)
+    for (const d of [a, b, c]) fs.rmSync(d, { recursive: true, force: true })
   }
+  const bad = rows.filter(r => r.diffs || r.metadata.diffs)
+  results.write('verify', { corpora: rows, ok: bad.length === 0 })
+  if (bad.length) process.exitCode = 1
 })()

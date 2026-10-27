@@ -6,12 +6,15 @@
     "build": "bash scripts/build-addon.sh",
     "page": "node page.mjs",
     "corpus": "node gen.js && node fetch-corpus.js",
+    "corpus:install": "node fetch-tree.js 150",
     "bench": "node bench.js 7",
     "bench:tgz": "node bench-e2e.js 5",
-    "bench:install": "node fetch-tree.js 150 && node bench-install.js 4",
+    "bench:install": "node bench-install.js 4",
     "bench:memory": "node mem-driver.js",
+    "bench:floor": "node floor.js",
     "verify": "node verify.js lodash typescript eslint many-small few-large",
-    "fidelity": "node fidelity.js"
+    "fidelity": "node fidelity.js",
+    "all": "npm run bench && npm run bench:tgz && npm run bench:install && npm run bench:memory && npm run bench:floor && npm run verify && npm run page"
   },
   "dependencies": {
     "tar": "7.5.22"

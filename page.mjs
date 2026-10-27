@@ -1,43 +1,106 @@
-// Generates compare.html from the measured numbers, so bar widths are computed
-// instead of hand-typed.
-import { writeFileSync } from 'node:fs'
+// Generates compare.html from results/*.json, written by the benchmarks
+// themselves. Nothing measured is typed into this file.
+import { readFileSync, writeFileSync } from 'node:fs'
 
-const MACHINE = 'Ryzen 9 5950X, 32 threads, tmpfs, Linux x64'
-const NODE = 'node v24.20.0, node-tar 7.5.22, tar-codec 0.0.15'
+const read = (name) => {
+  try {
+    return JSON.parse(readFileSync(new URL(`./results/${name}.json`, import.meta.url), 'utf8'))
+  } catch (e) {
+    throw new Error(`results/${name}.json is missing or invalid (${e.code || e.message}); run the benchmark that writes it, or \`npm run all\``)
+  }
+}
 
-// raw tar, median of 7, ms: [node-tar, tar-codec]
-const raw = [
-  { name: 'lodash', mb: 2.2, entries: 1051, parse: [9.04, 1.29], extract: [82.3, 10.9] },
-  { name: 'typescript', mb: 2.7, entries: 416, parse: [2.45, 0.76], extract: [54.7, 6.14] },
-  { name: 'eslint', mb: 3.1, entries: 421, parse: [2.30, 0.74], extract: [49.5, 7.12] },
-  { name: 'synthetic, 10k small files', mb: 14.7, entries: 10102, parse: [55.5, 9.71], extract: [1113.6, 97.8] },
-  { name: 'synthetic, 50 x 200 KB', mb: 9.8, entries: 53, parse: [0.39, 0.70], extract: [6.95, 6.54] },
-]
+const rawJson = read('raw')
+const tgzJson = read('tgz')
+const installJson = read('install')
+const memJson = read('memory')
+const floorJson = read('floor')
+const verifyJson = read('verify')
 
-// .tgz end to end, median of 5, ms
-const tgz = [
-  { name: 'lodash', total: [89.0, 13.0], gunzip: 2.5 },
-  { name: 'typescript', total: [60.2, 8.7], gunzip: 2.9 },
-  { name: 'eslint', total: [61.7, 11.2], gunzip: 4.6 },
-  { name: 'synthetic, 10k small files', total: [1112.4, 123.8], gunzip: 29.4 },
-]
+const med = (a) => [...a].sort((x, y) => x - y)[Math.floor(a.length / 2)]
+const one = (n) => Number(n.toFixed(1))
+const round = (n) => Math.round(n)
+const range = (xs) => [Math.min(...xs), Math.max(...xs)]
+const ratio = ([a, b]) => a / b
+const fmtRange = ([a, b]) => `${a.toFixed(1)} to ${b.toFixed(1)}`
+const label = (name) => ({
+  'many-small': 'synthetic, 10k small files',
+  'few-large': 'synthetic, 50 x 200 KB',
+}[name] || name)
 
-// install-shaped closure: 130 packages, 4313 files, 32 MB unpacked, median of 4
-const install = [
-  { name: 'node-tar, one at a time', ms: 741, note: '' },
-  { name: 'node-tar, 8 in flight', ms: 496, note: 'the shape pacote actually uses' },
-  { name: 'tar-codec + JS gunzip, one at a time', ms: 172, note: 'inflate 55 ms, extract 116 ms' },
-  { name: 'tar-codec + async zlib, 8 in flight', ms: 155, note: 'inflate 81 ms, extract 75 ms' },
-  { name: 'tar-codec, zlib-rs inside the addon, 8 in flight', ms: 106, note: 'best arm, inflate included' },
-]
+const MACHINE = `${rawJson.machine}, ${rawJson.workFs} work dir, ${rawJson.platform}`
+const NODE = `${rawJson.node}, node-tar ${rawJson.nodeTar}, tar-codec ${rawJson.tarCodec}`
 
-// peak RSS, MB, median of 3 process runs
-const memory = [
-  { name: 'lodash, 5 extractions', idle: 59, tar: 117, codec: 61, async: 75 },
-  { name: '10k files, 2 extractions', idle: 71, tar: 260, codec: 73, async: 103 },
-  { name: 'lodash, 8 concurrent', idle: 59, tar: 303, codec: 61, async: 90 },
-  { name: '10k files, 8 concurrent', idle: 72, tar: 1101, codec: 73, async: 254 },
-]
+const raw = rawJson.corpora.map(c => ({
+  name: label(c.name),
+  mb: c.mb,
+  entries: c.entries,
+  verify: c.verify.diffs,
+  parse: [med(c.arms.parseTar), med(c.arms.parseCodec)],
+  extract: [med(c.arms.extractTar), med(c.arms.extractCodec)],
+  matched: [med(c.arms.extractTarNoMeta), med(c.arms.extractCodecMeta)],
+}))
+
+const manyEntry = raw.filter(r => r.entries >= 400)
+const extractRange = range(manyEntry.map(r => ratio(r.extract)))
+const matchedRange = range(manyEntry.map(r => ratio(r.matched)))
+const parseRange = range(manyEntry.map(r => ratio(r.parse)))
+const verifyDiffs = verifyJson.corpora.reduce((a, c) => a + c.diffs, 0)
+const verifyMetaDiffs = verifyJson.corpora.reduce((a, c) => a + (c.metadata ? c.metadata.diffs : 0), 0)
+
+const tgz = tgzJson.corpora.map(c => ({
+  name: label(c.name),
+  gunzip: med(c.gunzip),
+  total: [med(c.tar), med(c.totals)],
+}))
+const concurrent = tgzJson.concurrent.median
+
+const tar8 = med(installJson.arms.find(a => a.name === 'tar-8').total)
+const install = installJson.arms.map(a => ({
+  name: {
+    'tar-1': 'node-tar, one at a time',
+    'tar-8': 'node-tar, 8 in flight',
+    'codec-gunzip-1': 'tar-codec + JS gunzip, one at a time',
+    'codec-asyncgz-8': 'tar-codec + async zlib, 8 in flight',
+    'codec-nativegz-1': 'tar-codec, zlib-rs inside the addon, one at a time',
+    'codec-nativegz-8': 'tar-codec, zlib-rs inside the addon, 8 in flight',
+  }[a.name],
+  ms: med(a.total),
+  note: a.name === 'tar-8' ? 'the shape pacote actually uses'
+    : a.name === 'tar-1' ? ''
+      : a.name === 'codec-nativegz-8' ? 'best arm, inflate included'
+        : `inflate ${med(a.inflate).toFixed(0)} ms, extract ${med(a.extract).toFixed(0)} ms`,
+}))
+const bestCodec = install.find(a => a.name.includes('zlib-rs inside the addon, 8'))
+const installRatio = tar8 / bestCodec.ms
+
+const memory = memJson.cases.map(c => {
+  const idle = c.arms.baseline.peak.median
+  const codecArm = c.par > 1 ? 'codec-async' : (c.corpus.endsWith('.tgz') ? 'codec-gz' : 'codec')
+  const ca = c.arms[codecArm]
+  const blocking = c.arms.codec ? c.arms.codec.peak.median : ca.peak.median
+  const note = c.corpus.endsWith('.tgz') ? '315 KB tgz, 1051 entries'
+    : c.corpus === 'many-small' ? '14.7 MB tar, 10102 entries'
+      : '2.2 MB tar, 1051 entries'
+  return {
+    name: c.workload,
+    note,
+    idle,
+    tar: c.arms.tar.peak.median,
+    codec: ca.peak.median,
+    blocking,
+    tarDelta: c.arms.tar.delta.median,
+    codecDelta: ca.delta.median,
+    arm: codecArm,
+    tarRange: [c.arms.tar.peak.min, c.arms.tar.peak.max],
+    codecRange: [ca.peak.min, ca.peak.max],
+  }
+})
+const single10k = memory.find(m => m.note.startsWith('14.7') && !m.name.includes('concurrent'))
+const conc10k = memory.find(m => m.note.startsWith('14.7') && m.name.includes('concurrent'))
+const floorTar = med(floorJson.tar)
+const floorCodec = med(floorJson.codec)
+const floorRaw = med(floorJson.floor)
 
 const packages = [
   { name: 'tar', bytes: 2298662, files: 249 },
@@ -94,11 +157,16 @@ const features = [
 ]
 
 const totalBytes = packages.reduce((a, p) => a + p.bytes, 0)
+const nodeTarMB = (totalBytes / 1e6).toFixed(2)
+const addonMB = (ADDON.bytes / 1e6).toFixed(2)
+const addonGzKB = Math.round(ADDON.gz / 1e3)
+const DATE = new Date(rawJson.date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })
 const pct = (n, max) => Math.max(1.5, (n / max) * 100).toFixed(1)
+const num = (n) => (n < 10 ? n.toFixed(2) : n.toFixed(1))
 const rowBars = (a, b) => {
   const max = Math.max(a, b)
-  return `<div class="m"><span class="track"><i class="tar" style="--w:${pct(a, max)}%"></i></span><span class="v">${a}</span></div>
-        <div class="m"><span class="track"><i class="codec" style="--w:${pct(b, max)}%"></i></span><span class="v">${b}</span></div>`
+  return `<div class="m"><span class="track"><i class="tar" style="--w:${pct(a, max)}%"></i></span><span class="v">${num(a)}</span></div>
+        <div class="m"><span class="track"><i class="codec" style="--w:${pct(b, max)}%"></i></span><span class="v">${num(b)}</span></div>`
 }
 const barsOnly = (a, b) => {
   const max = Math.max(a, b)
@@ -120,7 +188,7 @@ const html = `<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="Measured comparison of node-tar 7.5.22 and astral tar-codec 0.0.15 for npm: extract speed, peak memory, install size and feature gaps.">
+<meta name="description" content="Measured comparison of node-tar ${rawJson.nodeTar} and astral tar-codec ${rawJson.tarCodec} for npm: extract speed, peak memory, install size and feature gaps.">
 <title>node-tar vs tar-codec, measured on npm tarballs</title>
 <style>
   :root {
@@ -365,35 +433,39 @@ const html = `<!doctype html>
 <header class="top">
   <div class="kicker">
     <span class="label">npm cli 12.2.1 &middot; dependency benchmark</span>
-    <span class="label">27 Oct 2026</span>
+    <span class="label">${DATE}</span>
   </div>
   <h1>node-tar <span class="vs">vs</span> tar-codec</h1>
   <p class="lede">
-    Astral's Rust tar parser is <b>7 to 11 times faster</b> at extracting npm-shaped
-    tarballs, needs <b>1 MB of resident memory instead of 190</b>, and still cannot replace
-    node-tar in npm without four behaviour changes and a native build for every
-    platform. Measured through a napi addon, against the real tarballs npm ships.
+    Astral's Rust tar parser extracts npm-shaped tarballs with hundreds to thousands of
+    entries <b>${fmtRange(matchedRange)} times faster</b> than node-tar once both sides restore
+    file modes and mtimes, and
+    ${installRatio.toFixed(1)} times faster end to end on an install-shaped run. Peak memory
+    for a 10k-entry archive is <b>+${round(single10k.codec - single10k.idle)} MB against
+    +${round(single10k.tar - single10k.idle)} MB</b>. It still cannot replace node-tar in npm
+    without eight gaps and a native build for every platform. Measured through a napi addon,
+    against the real tarballs npm ships.
   </p>
   <div class="ledger">
     <div>
       <div class="k label">extract speed</div>
-      <div class="big">7.0&ndash;11.4<span class="dim">x</span></div>
-      <div class="sub">82.3 ms &rarr; 10.9 ms, lodash</div>
+      <div class="big">${matchedRange[0].toFixed(1)}&ndash;${matchedRange[1].toFixed(1)}<span class="dim">x</span></div>
+      <div class="sub">${one(raw[0].matched[0])} ms &rarr; ${one(raw[0].matched[1])} ms, lodash, modes restored</div>
     </div>
     <div>
       <div class="k label">peak memory</div>
-      <div class="big">190 &rarr; 1<span class="dim"> MB</span></div>
+      <div class="big">${round(single10k.tar - single10k.idle)} &rarr; ${round(single10k.codec - single10k.idle)}<span class="dim"> MB</span></div>
       <div class="sub">10k files, one extraction</div>
     </div>
     <div>
       <div class="k label">install footprint</div>
-      <div class="big">2.9 &rarr; 1.7<span class="dim"> MB</span></div>
+      <div class="big">${nodeTarMB} &rarr; ${addonMB}<span class="dim"> MB</span></div>
       <div class="sub">6 JS packages, or one binary</div>
     </div>
     <div>
       <div class="k label">feature parity</div>
-      <div class="big">4 <span class="dim">blockers</span></div>
-      <div class="sub">modes, mtimes, links, vendors</div>
+      <div class="big">8 <span class="dim">gaps</span></div>
+      <div class="sub">4 fidelity, 4 API</div>
     </div>
   </div>
 </header>
@@ -404,20 +476,21 @@ const html = `<!doctype html>
     <span class="sec-num">01</span>
     <h2>Speed</h2>
     <p>
-      Every corpus is extracted into a fresh directory, seven times, alternating
-      order. Both sides produce byte-identical trees: same paths, sizes, exec bits
-      and sha256.
+      Every corpus is extracted into a fresh directory, ${rawJson.iterations} times, alternating
+      order. Before timing, bench.js extracts both sides and compares path, size, exec bit
+      and sha256; the standalone verify run reported ${verifyDiffs} content differences and
+      ${verifyMetaDiffs} metadata differences across ${verifyJson.corpora.length} corpora.
     </p>
   </div>
 
   <div class="figs">
     <div class="legend">
-      <span><span class="swatch" style="background:var(--tar)"></span>node-tar 7.5.22</span>
-      <span><span class="swatch" style="background:var(--codec)"></span>tar-codec 0.0.15</span>
+      <span><span class="swatch" style="background:var(--tar)"></span>node-tar ${rawJson.nodeTar}</span>
+      <span><span class="swatch" style="background:var(--codec)"></span>tar-codec ${rawJson.tarCodec}</span>
       <span class="scalenote">per-row scale</span>
     </div>
 
-    <p class="cap">Uncompressed tar, extract to disk. Median of 7, milliseconds.</p>
+    <p class="cap">Uncompressed tar, extract to disk, tar-codec's own output semantics. Median of ${rawJson.iterations}, milliseconds.</p>
 
     <div class="scroll">
 
@@ -441,7 +514,43 @@ const html = `<!doctype html>
     </table>
     </div>
 
-    <p class="cap">Uncompressed tar, parse only, no files written. Median of 7, milliseconds.</p>
+    <p class="cap">Same corpora with the work equalized: node-tar skips mode and mtime restore, tar-codec gets a pass that restores both. Median of ${rawJson.iterations}, milliseconds.</p>
+
+    <div class="scroll">
+
+    <table aria-label="extract speed, modes and mtimes restored">
+      <thead>
+        <tr>
+          <th>corpus</th>
+          <th class="num">entries</th>
+          <th>node-tar noChmod/noMtime / tar-codec + metadata pass</th>
+          <th class="num">speedup</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${raw.map(r => `<tr>
+          <td class="name">${r.name}<small>${r.mb} MB</small></td>
+          <td class="num" data-label="entries">${r.entries.toLocaleString('en-US')}</td>
+          <td class="figcell" data-label="node-tar / tar-codec, ms">${rowBars(r.matched[0], r.matched[1])}</td>
+          <td class="num" data-label="speedup">${speedBadge(x(r.matched[0], r.matched[1]))}</td>
+        </tr>`).join('\n        ')}
+      </tbody>
+    </table>
+    </div>
+
+    <p class="note" style="margin-top:1rem">
+      The first table compares different jobs. Forcing node-tar to skip modes and mtimes moves
+      lodash by ${Math.abs(raw[0].matched[0] - raw[0].extract[0]).toFixed(1)} ms
+      (${one(raw[0].extract[0])} to ${one(raw[0].matched[0])}); adding the same pass to tar-codec costs
+      ${one(raw[0].matched[1] - raw[0].extract[1])} ms
+      (${one(raw[0].extract[1])} to ${one(raw[0].matched[1])}). With both sides doing the work the
+      ratio is ${fmtRange(matchedRange)}x, not ${fmtRange(extractRange)}x. tar-codec ${rawJson.tarCodec}
+      exposes neither mode nor mtime, so the codec pass reads them from node-tar's listing and
+      applies them in JS, which makes it an upper bound on the codec side. verify.js checks the
+      result against node-tar's modes and mtimes and reports ${verifyMetaDiffs} differences.
+    </p>
+
+    <p class="cap">Uncompressed tar, parse only, no files written. Median of ${rawJson.iterations}, milliseconds.</p>
 
     <div class="scroll">
 
@@ -465,7 +574,7 @@ const html = `<!doctype html>
     </table>
     </div>
 
-    <p class="cap">.tgz end to end, one archive at a time. node-tar inflates its own input; tar-codec gets gunzipSync output, and that cost is included.</p>
+    <p class="cap">.tgz end to end, one archive at a time. node-tar inflates its own input; tar-codec gets gunzipSync output, and that cost is included. Median of ${tgzJson.iterations}.</p>
 
     <div class="scroll">
 
@@ -481,27 +590,37 @@ const html = `<!doctype html>
       <tbody>
         ${tgz.map(r => `<tr>
           <td class="name">${r.name}</td>
-          <td class="num" data-label="gunzip">${r.gunzip} ms</td>
+          <td class="num" data-label="gunzip">${r.gunzip.toFixed(1)} ms</td>
           <td class="figcell" data-label="node-tar / tar-codec, ms">${rowBars(r.total[0], r.total[1])}</td>
           <td class="num" data-label="speedup">${speedBadge(x(r.total[0], r.total[1]))}</td>
         </tr>`).join('\n        ')}
       </tbody>
     </table>
     </div>
+
+    <p class="note" style="margin-top:0.9rem">
+      24 archives started at once: node-tar ${concurrent.tar.toFixed(1)} ms, tar-codec
+      ${concurrent.asyncGz.toFixed(1)} ms with gzip inside the addon
+      (${(concurrent.tar / concurrent.asyncGz).toFixed(2)}x). Pre-inflating the input would
+      report ${(concurrent.tar / concurrent.asyncRaw).toFixed(2)}x, which is why that arm is not
+      the one quoted.
+    </p>
   </div>
 
   <div style="margin-top:2.6rem">
     <h3 style="font-size:1rem;margin:0 0 0.4rem">Where node-tar spends the time</h3>
     <p class="note">
-      Same 1051-file tree written by a plain <code>fs.writeFileSync</code> loop: 15.3 ms.
-      tar-codec extracts in 10.3 ms, so it sits at the filesystem floor. node-tar
-      takes 88.7 ms, which is per-entry stream and callback work, not I/O. That is
-      why the ratio survives on a real disk, and why the 53-entry corpus with
-      200 KB files shows no win at all.
+      Same 1051-file tree written by a plain <code>fs.writeFileSync</code> loop:
+      ${floorRaw.toFixed(1)} ms. tar-codec extracts in ${floorCodec.toFixed(1)} ms, so it sits at
+      the filesystem floor on this work dir (${rawJson.workFs}). node-tar takes
+      ${floorTar.toFixed(1)} ms, which is per-entry stream and callback work, not I/O. Because
+      tar-codec is at the floor, the ratio shrinks on a slower filesystem; set
+      <code>TAR_BENCH_WORK</code> to a directory on a real disk and rerun to see the disk-bound
+      number.
     </p>
   </div>
 
-  <p class="cap">Install-shaped: real dependency closure of eslint, express, typescript, webpack and jest, 130 packages, 4313 files, 32 MB unpacked. Median of 4.</p>
+  <p class="cap">Install-shaped: real dependency closure of eslint, express, typescript, webpack and jest, ${installJson.packages} packages, ${installJson.files} files, ${Math.round(installJson.unpackedBytes / 1024 / 1024)} MB unpacked. Median of ${installJson.iterations}.</p>
 
   <div class="scroll" style="margin-top:2.4rem">
 
@@ -517,17 +636,19 @@ const html = `<!doctype html>
       <tbody>
         ${install.map(a => `<tr>
           <td class="name">${a.name}</td>
-          <td class="num" data-label="total">${a.ms} ms</td>
-          <td class="num" data-label="vs node-tar, 8 in flight">${speedBadge(x(496, a.ms))}</td>
+          <td class="num" data-label="total">${Math.round(a.ms)} ms</td>
+          <td class="num" data-label="vs node-tar, 8 in flight">${speedBadge(x(tar8, a.ms))}</td>
           <td class="why">${a.note}</td>
         </tr>`).join('\n        ')}
       </tbody>
     </table>
   </div>
   <p class="note" style="margin-top:0.9rem">
-    130 packages is about ${seconds(496)} of extract work in node-tar at 8 in flight,
-    against ${seconds(106)} for the best tar-codec arm. On a 500-package cold install
-    that is a couple of seconds, not a different install.
+    ${installJson.packages} packages is about ${seconds(tar8)} of extract work in node-tar at 8
+    in flight, against ${seconds(bestCodec.ms)} for the best tar-codec arm. Every arm writes the
+    same paths and bytes (the codec arms strip <code>package/</code> with a staging dir and a
+    rename, since tar-codec has no strip option) and each run is checked against the tar-1 tree.
+    On a 500-package cold install that is a couple of seconds, not a different install.
   </p>
 </section>
 
@@ -542,7 +663,7 @@ const html = `<!doctype html>
     </p>
   </div>
 
-  <p class="cap">Peak RSS in MB, median of 3 runs. Idle node is 59 to 72 MB and is excluded.</p>
+  <p class="cap">Peak RSS in MB, median of ${memJson.processes} process runs. Idle node is ${Math.round(Math.min(...memory.map(m => m.idle)))} to ${Math.round(Math.max(...memory.map(m => m.idle)))} MB and is excluded. The arm used for each row is named under the workload.</p>
 
   <div class="scroll">
 
@@ -558,11 +679,11 @@ const html = `<!doctype html>
       </thead>
       <tbody>
         ${memory.map(m => {
-          const a = m.tar - m.idle
-          const b = m.codec - m.idle
+          const a = Math.round(m.tar - m.idle)
+          const b = Math.round(m.codec - m.idle)
           return `<tr>
-          <td class="name">${m.name}<small>${m.name.includes('10k') ? '14.7 MB tar, 10102 entries' : '2.2 MB tar, 1051 entries'}</small></td>
-          <td class="num" data-label="idle">${m.idle} MB</td>
+          <td class="name">${m.name}<small>${m.note} &middot; ${m.arm}</small></td>
+          <td class="num" data-label="idle">${Math.round(m.idle)} MB</td>
           <td class="figcell" data-label="peak over idle">${barsOnly(a, b)}</td>
           <td class="num" data-label="node-tar">+${a} MB</td>
           <td class="num" data-label="tar-codec">+${b} MB</td>
@@ -572,12 +693,17 @@ const html = `<!doctype html>
     </table>
   </div>
   <p class="note" style="margin-top:0.9rem">
-    The async wrapper (needed so pacote can keep eight extractions in flight) costs
-    one copy of the archive per task: +65 MB at 8 concurrent 10k-file archives,
-    against +2 MB for the blocking call. That copy is avoidable by sharing the
-    buffer or reading from a file handle. The 1101 MB node-tar figure is not a
-    typo: eight concurrent unpacks of a 10102-entry archive hold roughly a gigabyte
-    of live stream buffers.
+    The concurrent rows chart the async arm, because a blocking napi call cannot overlap: eight
+    of them run one after another in a single tick. On the 10k archive the blocking call peaks at
+    +${Math.round(conc10k.blocking - conc10k.idle)} MB, against
+    +${Math.round(conc10k.codec - conc10k.idle)} MB for the async arm that actually overlaps, and
+    node-tar peaks at +${Math.round(conc10k.tar - conc10k.idle)} MB holding eight in flight. The
+    async wrapper copies the archive per task, which is most of its peak; that copy is avoidable
+    by sharing the buffer or reading from a file handle. Peak ranges across
+    ${memJson.processes} runs: node-tar ${Math.round(conc10k.tarRange[0])} to
+    ${Math.round(conc10k.tarRange[1])} MB, tar-codec ${Math.round(conc10k.codecRange[0])} to
+    ${Math.round(conc10k.codecRange[1])} MB. The chart is peak over idle, not the retained delta
+    after the directories are removed.
   </p>
 </section>
 
@@ -595,8 +721,8 @@ const html = `<!doctype html>
   <div class="sizes">
     <div class="size-compare">
       <div class="size-row">
-        <div class="size-label"><span>node-tar</span><span class="v">2.85 MB &middot; 6 packages</span></div>
-        <div class="size-bar" role="img" aria-label="node-tar 2.85 MB">
+        <div class="size-label"><span>node-tar</span><span class="v">${nodeTarMB} MB &middot; 6 packages</span></div>
+        <div class="size-bar" role="img" aria-label="node-tar ${nodeTarMB} MB">
           ${packages.map((p, i) => {
             const colors = ['oklch(0.66 0.090 176)', 'oklch(0.71 0.080 176)', 'oklch(0.75 0.068 176)', 'oklch(0.79 0.055 176)', 'oklch(0.83 0.042 176)', 'oklch(0.86 0.030 176)']
             return `<span style="width:${(p.bytes / totalBytes * 100).toFixed(1)}%;background:${colors[i]}" title="${p.name}: ${p.bytes} bytes"></span>`
@@ -610,22 +736,22 @@ const html = `<!doctype html>
         </ul>
       </div>
       <div class="size-row">
-        <div class="size-label"><span>tar-codec</span><span class="v">1.74 MB &middot; 1 binary</span></div>
-        <div class="size-bar" role="img" aria-label="tar-codec addon 1.74 MB">
+        <div class="size-label"><span>tar-codec</span><span class="v">${addonMB} MB &middot; 1 binary</span></div>
+        <div class="size-bar" role="img" aria-label="tar-codec addon ${addonMB} MB">
           <span style="width:${(ADDON.bytes / totalBytes * 100).toFixed(1)}%;background:var(--codec)" title="tarcodec.node: ${ADDON.bytes} bytes"></span>
         </div>
-        <p class="size-note">One <code>tarcodec.node</code>, 629 KB gzipped on the wire. The other seven platform builds exist in the registry but never reach this machine.</p>
+        <p class="size-note">One <code>tarcodec.node</code>, ${addonGzKB} KB gzipped on the wire. The other seven platform builds exist in the registry but never reach this machine.</p>
       </div>
     </div>
 
     <dl class="facts">
       <div>
         <dt>node-tar 7.5.22</dt>
-        <dd><b>2.85 MB</b> unpacked, <b>322</b> files, <b>6</b> packages, no native code. Downloads and runs anywhere node does.</dd>
+        <dd><b>${nodeTarMB} MB</b> unpacked, <b>322</b> files, <b>6</b> packages, no native code. Downloads and runs anywhere node does.</dd>
       </div>
       <div>
         <dt>tar-codec addon</dt>
-        <dd><b>1.74 MB</b> per platform, <b>629 KB</b> gzipped. 79 crates in the lockfile at build time, none at runtime. Eight platform builds is about <b>14 MB</b> of published artifacts; a user downloads one.</dd>
+        <dd><b>${addonMB} MB</b> per platform, <b>${addonGzKB} KB</b> gzipped. 79 crates in the lockfile at build time, none at runtime. Eight platform builds is about <b>14 MB</b> of published artifacts; a user downloads one.</dd>
       </div>
       <div>
         <dt>The part that is not in the number</dt>
@@ -640,8 +766,8 @@ const html = `<!doctype html>
     <span class="sec-num">04</span>
     <h2>Features</h2>
     <p>
-      Tested, not read off a README. The four blockers are the ones that change
-      what ends up on disk; the rest are work to schedule.
+      Tested, not read off a README. The four fidelity gaps are the ones that change
+      what ends up on disk; the other four are API work to schedule.
     </p>
   </div>
 
@@ -692,17 +818,19 @@ const html = `<!doctype html>
     <div class="codec">
       <h3>What tar-codec buys</h3>
       <p>
-        Seven to eleven times the extract throughput on packages with hundreds to
-        thousands of files, with no heap growth and a parser that rejects the
-        family-mixing and tombstone tricks the blog post describes.
+        ${fmtRange(matchedRange)} times the extract throughput on packages with hundreds to
+        thousands of files once both sides restore modes and mtimes, and
+        ${fmtRange(extractRange)} times when tar-codec's own output semantics are accepted. No
+        heap growth, and a parser that rejects the family-mixing and tombstone tricks the blog
+        post describes.
       </p>
     </div>
     <div class="tar">
       <h3>What it costs</h3>
       <p>
-        A native build matrix, a fallback path, a second wrapper for pack and
-        publish, and four behaviour changes that users would notice in file modes
-        and mtimes.
+        A native build matrix, a fallback path, a second wrapper for pack and publish, and eight
+        gaps: four fidelity changes users would notice in modes, mtimes, links and vendor records,
+        plus strip, filter, mode metadata and a writer.
       </p>
     </div>
     <div>
@@ -738,17 +866,20 @@ const html = `<!doctype html>
 <footer>
   <div class="label">Method</div>
   <p>
-    ${MACHINE}. ${NODE}. Medians of 7 for raw tar, 5 for .tgz, 4 for the install
-    closure, 3 process runs for memory. Corpora: lodash 4.18.1, typescript 7.0.2,
-    eslint 10.13.0, two generated pax tarballs, and the latest versions of a real
-    dependency closure pulled from the registry. The addon is a napi-rs cdylib over
-    tar-codec 0.0.15 with flate2/zlib-rs for the gzip arm; source and scripts sit
-    next to this page. tmpfs absolutes will be lower than a real disk; ratios track
-    per-entry cost, not I/O.
+    ${MACHINE}. ${NODE}. Work dir <code>${rawJson.workDir}</code> on ${rawJson.workFs}. Medians of
+    ${rawJson.iterations} for raw tar, ${tgzJson.iterations} for .tgz, ${installJson.iterations}
+    for the install closure, ${memJson.processes} process runs for memory. Every number on this
+    page is read from <code>results/*.json</code>, written by the benchmark that produced it;
+    <code>npm run all</code> reruns the set and regenerates this page. Corpora: lodash,
+    typescript and eslint pinned in <code>fetch-corpus.js</code>, two generated pax tarballs, and
+    a real dependency closure pulled from the registry. The addon is a napi-rs cdylib over
+    tar-codec ${rawJson.tarCodec} with flate2/zlib-rs for the gzip arm; source and scripts sit
+    next to this page. Absolute times on tmpfs will be lower than a real disk, and because
+    tar-codec runs at the write floor the ratio shrinks on a slower filesystem.
   </p>
   <p>
-    node-tar install sizes come from registry metadata. Everything else is measured
-    on this machine, including the fidelity test and the vendor-record rejection.
+    node-tar install sizes come from registry metadata. Everything else is measured on this
+    machine, including the fidelity test and the vendor-record rejection.
   </p>
 </footer>
 </div>

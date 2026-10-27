@@ -6,12 +6,13 @@ const path = require('path')
 const { performance } = require('perf_hooks')
 const tar = require('tar')
 const codec = require(ROOT + '/tarcodec.node')
+const { WORK, fresh } = require('./lib/work')
+const results = require('./lib/results')
 
-const W = ROOT + '/work/floor'
+const W = path.join(WORK, 'floor')
 const buf = fs.readFileSync(ROOT + '/corpus/lodash.tar')
 const entries = codec.list(buf)
 const files = entries.filter(e => e.kind === 'file')
-const fresh = d => { fs.rmSync(d, { recursive: true, force: true }); fs.mkdirSync(d, { recursive: true }) }
 const med = a => [...a].sort((x, y) => x - y)[Math.floor(a.length / 2)]
 
 const x = (b, d) => new Promise((res, rej) => {
@@ -59,4 +60,12 @@ const floor = (dest) => {
     b.push(await run((bb, d) => codec.extractAsync(bb, d, true)))
   }
   console.log('8x parallel lodash: node-tar', med(a).toFixed(1), 'ms; tar-codec async', med(b).toFixed(1), 'ms')
+
+  results.write('floor', {
+    files: files.length,
+    tar: row.tar,
+    codec: row.codec,
+    floor: row.floor,
+    parallel: { copies: 8, tar: a, codec: b },
+  })
 })()

@@ -2,7 +2,7 @@
  {
   "name": "eslint",
   "version": "10.13.0",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/eslint.tgz",
+  "file": "deps/eslint.tgz",
   "deps": [
    "ajv",
    "debug",
@@ -39,7 +39,7 @@
  {
   "name": "express",
   "version": "5.3.0",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/express.tgz",
+  "file": "deps/express.tgz",
   "deps": [
    "qs",
    "depd",
@@ -74,7 +74,7 @@
  {
   "name": "typescript",
   "version": "7.0.2",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/typescript.tgz",
+  "file": "deps/typescript.tgz",
   "deps": [
    "@typescript/typescript-aix-ppc64",
    "@typescript/typescript-linux-arm",
@@ -101,7 +101,7 @@
  {
   "name": "webpack",
   "version": "5.112.2",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/webpack.tgz",
+  "file": "deps/webpack.tgz",
   "deps": [
    "events",
    "mime-db",
@@ -125,7 +125,7 @@
  {
   "name": "jest",
   "version": "30.5.2",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/jest.tgz",
+  "file": "deps/jest.tgz",
   "deps": [
    "jest-cli",
    "@jest/core",
@@ -136,7 +136,7 @@
  {
   "name": "ajv",
   "version": "8.20.0",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/ajv.tgz",
+  "file": "deps/ajv.tgz",
   "deps": [
    "fast-uri",
    "fast-deep-equal",
@@ -147,7 +147,7 @@
  {
   "name": "debug",
   "version": "4.4.3",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/debug.tgz",
+  "file": "deps/debug.tgz",
   "deps": [
    "ms"
   ]
@@ -155,7 +155,7 @@
  {
   "name": "espree",
   "version": "11.2.0",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/espree.tgz",
+  "file": "deps/espree.tgz",
   "deps": [
    "acorn",
    "acorn-jsx",
@@ -165,13 +165,13 @@
  {
   "name": "ignore",
   "version": "7.0.14",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/ignore.tgz",
+  "file": "deps/ignore.tgz",
   "deps": []
  },
  {
   "name": "esquery",
   "version": "1.7.0",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/esquery.tgz",
+  "file": "deps/esquery.tgz",
   "deps": [
    "estraverse"
   ]
@@ -179,13 +179,13 @@
  {
   "name": "esutils",
   "version": "2.0.3",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/esutils.tgz",
+  "file": "deps/esutils.tgz",
   "deps": []
  },
  {
   "name": "find-up",
   "version": "8.0.0",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/find-up.tgz",
+  "file": "deps/find-up.tgz",
   "deps": [
    "locate-path",
    "unicorn-magic"
@@ -194,7 +194,7 @@
  {
   "name": "is-glob",
   "version": "4.0.3",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/is-glob.tgz",
+  "file": "deps/is-glob.tgz",
   "deps": [
    "is-extglob"
   ]
@@ -202,7 +202,7 @@
  {
   "name": "minimatch",
   "version": "11.0.0",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/minimatch.tgz",
+  "file": "deps/minimatch.tgz",
   "deps": [
    "brace-expansion",
    "@isaacs/nonrecursive-glob-match"
@@ -211,7 +211,7 @@
  {
   "name": "optionator",
   "version": "0.9.4",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/optionator.tgz",
+  "file": "deps/optionator.tgz",
   "deps": [
    "levn",
    "deep-is",
@@ -224,7 +224,7 @@
  {
   "name": "cross-spawn",
   "version": "7.0.6",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/cross-spawn.tgz",
+  "file": "deps/cross-spawn.tgz",
   "deps": [
    "which",
    "path-key",
@@ -234,7 +234,7 @@
  {
   "name": "glob-parent",
   "version": "6.0.2",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/glob-parent.tgz",
+  "file": "deps/glob-parent.tgz",
   "deps": [
    "is-glob"
   ]
@@ -242,13 +242,13 @@
  {
   "name": "imurmurhash",
   "version": "0.1.4",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/imurmurhash.tgz",
+  "file": "deps/imurmurhash.tgz",
   "deps": []
  },
  {
   "name": "@eslint/core",
   "version": "1.2.1",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/@eslint+core.tgz",
+  "file": "deps/@eslint+core.tgz",
   "deps": [
    "@types/json-schema"
   ]
@@ -256,7 +256,7 @@
  {
   "name": "eslint-scope",
   "version": "9.1.2",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/eslint-scope.tgz",
+  "file": "deps/eslint-scope.tgz",
   "deps": [
    "esrecurse",
    "estraverse",
@@ -267,7 +267,7 @@
  {
   "name": "@humanfs/node",
   "version": "0.17.0",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/@humanfs+node.tgz",
+  "file": "deps/@humanfs+node.tgz",
   "deps": [
    "@humanfs/core",
    "@humanfs/types",
@@ -277,25 +277,25 @@
  {
   "name": "@types/estree",
   "version": "1.0.9",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/@types+estree.tgz",
+  "file": "deps/@types+estree.tgz",
   "deps": []
  },
  {
   "name": "fast-deep-equal",
   "version": "3.1.3",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/fast-deep-equal.tgz",
+  "file": "deps/fast-deep-equal.tgz",
   "deps": []
  },
  {
   "name": "natural-compare",
   "version": "1.4.0",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/natural-compare.tgz",
+  "file": "deps/natural-compare.tgz",
   "deps": []
  },
  {
   "name": "file-entry-cache",
   "version": "11.1.5",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/file-entry-cache.tgz",
+  "file": "deps/file-entry-cache.tgz",
   "deps": [
    "flat-cache"
   ]
@@ -303,7 +303,7 @@
  {
   "name": "@eslint/plugin-kit",
   "version": "0.7.3",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/@eslint+plugin-kit.tgz",
+  "file": "deps/@eslint+plugin-kit.tgz",
   "deps": [
    "levn",
    "@eslint/core"
@@ -312,13 +312,13 @@
  {
   "name": "eslint-visitor-keys",
   "version": "5.0.1",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/eslint-visitor-keys.tgz",
+  "file": "deps/eslint-visitor-keys.tgz",
   "deps": []
  },
  {
   "name": "@eslint/config-array",
   "version": "0.23.5",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/@eslint+config-array.tgz",
+  "file": "deps/@eslint+config-array.tgz",
   "deps": [
    "debug",
    "minimatch",
@@ -328,19 +328,19 @@
  {
   "name": "@humanwhocodes/retry",
   "version": "0.4.3",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/@humanwhocodes+retry.tgz",
+  "file": "deps/@humanwhocodes+retry.tgz",
   "deps": []
  },
  {
   "name": "escape-string-regexp",
   "version": "5.0.0",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/escape-string-regexp.tgz",
+  "file": "deps/escape-string-regexp.tgz",
   "deps": []
  },
  {
   "name": "@eslint/config-helpers",
   "version": "0.7.0",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/@eslint+config-helpers.tgz",
+  "file": "deps/@eslint+config-helpers.tgz",
   "deps": [
    "@eslint/core"
   ]
@@ -348,13 +348,13 @@
  {
   "name": "@eslint-community/regexpp",
   "version": "4.12.2",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/@eslint-community+regexpp.tgz",
+  "file": "deps/@eslint-community+regexpp.tgz",
   "deps": []
  },
  {
   "name": "@eslint-community/eslint-utils",
   "version": "4.10.1",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/@eslint-community+eslint-utils.tgz",
+  "file": "deps/@eslint-community+eslint-utils.tgz",
   "deps": [
    "eslint-visitor-keys"
   ]
@@ -362,19 +362,19 @@
  {
   "name": "@humanwhocodes/module-importer",
   "version": "1.0.1",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/@humanwhocodes+module-importer.tgz",
+  "file": "deps/@humanwhocodes+module-importer.tgz",
   "deps": []
  },
  {
   "name": "json-stable-stringify-without-jsonify",
   "version": "1.0.1",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/json-stable-stringify-without-jsonify.tgz",
+  "file": "deps/json-stable-stringify-without-jsonify.tgz",
   "deps": []
  },
  {
   "name": "qs",
   "version": "6.17.0",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/qs.tgz",
+  "file": "deps/qs.tgz",
   "deps": [
    "side-channel",
    "es-define-property"
@@ -383,19 +383,19 @@
  {
   "name": "depd",
   "version": "2.0.0",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/depd.tgz",
+  "file": "deps/depd.tgz",
   "deps": []
  },
  {
   "name": "etag",
   "version": "1.8.1",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/etag.tgz",
+  "file": "deps/etag.tgz",
   "deps": []
  },
  {
   "name": "once",
   "version": "1.4.0",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/once.tgz",
+  "file": "deps/once.tgz",
   "deps": [
    "wrappy"
   ]
@@ -403,7 +403,7 @@
  {
   "name": "send",
   "version": "1.2.1",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/send.tgz",
+  "file": "deps/send.tgz",
   "deps": [
    "ms",
    "etag",
@@ -421,25 +421,25 @@
  {
   "name": "vary",
   "version": "1.1.2",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/vary.tgz",
+  "file": "deps/vary.tgz",
   "deps": []
  },
  {
   "name": "fresh",
   "version": "0.5.2",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/fresh.tgz",
+  "file": "deps/fresh.tgz",
   "deps": []
  },
  {
   "name": "cookie",
   "version": "2.0.1",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/cookie.tgz",
+  "file": "deps/cookie.tgz",
   "deps": []
  },
  {
   "name": "router",
   "version": "2.2.0",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/router.tgz",
+  "file": "deps/router.tgz",
   "deps": [
    "depd",
    "debug",
@@ -451,7 +451,7 @@
  {
   "name": "accepts",
   "version": "1.3.8",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/accepts.tgz",
+  "file": "deps/accepts.tgz",
   "deps": [
    "mime-types",
    "negotiator"
@@ -460,7 +460,7 @@
  {
   "name": "type-is",
   "version": "3.0.0",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/type-is.tgz",
+  "file": "deps/type-is.tgz",
   "deps": [
    "content-type"
   ]
@@ -468,25 +468,25 @@
  {
   "name": "parseurl",
   "version": "1.3.3",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/parseurl.tgz",
+  "file": "deps/parseurl.tgz",
   "deps": []
  },
  {
   "name": "statuses",
   "version": "2.0.2",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/statuses.tgz",
+  "file": "deps/statuses.tgz",
   "deps": []
  },
  {
   "name": "encodeurl",
   "version": "2.0.0",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/encodeurl.tgz",
+  "file": "deps/encodeurl.tgz",
   "deps": []
  },
  {
   "name": "mime-types",
   "version": "3.0.2",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/mime-types.tgz",
+  "file": "deps/mime-types.tgz",
   "deps": [
    "mime-db"
   ]
@@ -494,7 +494,7 @@
  {
   "name": "proxy-addr",
   "version": "2.0.8",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/proxy-addr.tgz",
+  "file": "deps/proxy-addr.tgz",
   "deps": [
    "forwarded",
    "ipaddr.js"
@@ -503,7 +503,7 @@
  {
   "name": "body-parser",
   "version": "2.4.0",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/body-parser.tgz",
+  "file": "deps/body-parser.tgz",
   "deps": [
    "qs",
    "bytes",
@@ -519,13 +519,13 @@
  {
   "name": "escape-html",
   "version": "1.0.3",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/escape-html.tgz",
+  "file": "deps/escape-html.tgz",
   "deps": []
  },
  {
   "name": "http-errors",
   "version": "2.0.1",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/http-errors.tgz",
+  "file": "deps/http-errors.tgz",
   "deps": [
    "depd",
    "inherits",
@@ -537,7 +537,7 @@
  {
   "name": "on-finished",
   "version": "2.4.2",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/on-finished.tgz",
+  "file": "deps/on-finished.tgz",
   "deps": [
    "ee-first"
   ]
@@ -545,13 +545,13 @@
  {
   "name": "content-type",
   "version": "3.1.1",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/content-type.tgz",
+  "file": "deps/content-type.tgz",
   "deps": []
  },
  {
   "name": "finalhandler",
   "version": "2.1.1",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/finalhandler.tgz",
+  "file": "deps/finalhandler.tgz",
   "deps": [
    "debug",
    "parseurl",
@@ -564,13 +564,13 @@
  {
   "name": "range-parser",
   "version": "1.3.0",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/range-parser.tgz",
+  "file": "deps/range-parser.tgz",
   "deps": []
  },
  {
   "name": "serve-static",
   "version": "2.2.1",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/serve-static.tgz",
+  "file": "deps/serve-static.tgz",
   "deps": [
    "send",
    "parseurl",
@@ -581,163 +581,163 @@
  {
   "name": "cookie-signature",
   "version": "1.2.2",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/cookie-signature.tgz",
+  "file": "deps/cookie-signature.tgz",
   "deps": []
  },
  {
   "name": "merge-descriptors",
   "version": "2.0.0",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/merge-descriptors.tgz",
+  "file": "deps/merge-descriptors.tgz",
   "deps": []
  },
  {
   "name": "content-disposition",
   "version": "3.0.0",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/content-disposition.tgz",
+  "file": "deps/content-disposition.tgz",
   "deps": []
  },
  {
   "name": "@typescript/typescript-aix-ppc64",
   "version": "7.0.2",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/@typescript+typescript-aix-ppc64.tgz",
+  "file": "deps/@typescript+typescript-aix-ppc64.tgz",
   "deps": []
  },
  {
   "name": "@typescript/typescript-linux-arm",
   "version": "7.0.2",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/@typescript+typescript-linux-arm.tgz",
+  "file": "deps/@typescript+typescript-linux-arm.tgz",
   "deps": []
  },
  {
   "name": "@typescript/typescript-linux-x64",
   "version": "7.0.2",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/@typescript+typescript-linux-x64.tgz",
+  "file": "deps/@typescript+typescript-linux-x64.tgz",
   "deps": []
  },
  {
   "name": "@typescript/typescript-sunos-x64",
   "version": "7.0.2",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/@typescript+typescript-sunos-x64.tgz",
+  "file": "deps/@typescript+typescript-sunos-x64.tgz",
   "deps": []
  },
  {
   "name": "@typescript/typescript-win32-x64",
   "version": "7.0.2",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/@typescript+typescript-win32-x64.tgz",
+  "file": "deps/@typescript+typescript-win32-x64.tgz",
   "deps": []
  },
  {
   "name": "@typescript/typescript-darwin-x64",
   "version": "7.0.2",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/@typescript+typescript-darwin-x64.tgz",
+  "file": "deps/@typescript+typescript-darwin-x64.tgz",
   "deps": []
  },
  {
   "name": "@typescript/typescript-netbsd-x64",
   "version": "7.0.2",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/@typescript+typescript-netbsd-x64.tgz",
+  "file": "deps/@typescript+typescript-netbsd-x64.tgz",
   "deps": []
  },
  {
   "name": "@typescript/typescript-freebsd-x64",
   "version": "7.0.2",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/@typescript+typescript-freebsd-x64.tgz",
+  "file": "deps/@typescript+typescript-freebsd-x64.tgz",
   "deps": []
  },
  {
   "name": "@typescript/typescript-linux-arm64",
   "version": "7.0.2",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/@typescript+typescript-linux-arm64.tgz",
+  "file": "deps/@typescript+typescript-linux-arm64.tgz",
   "deps": []
  },
  {
   "name": "@typescript/typescript-linux-ppc64",
   "version": "7.0.2",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/@typescript+typescript-linux-ppc64.tgz",
+  "file": "deps/@typescript+typescript-linux-ppc64.tgz",
   "deps": []
  },
  {
   "name": "@typescript/typescript-linux-s390x",
   "version": "7.0.2",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/@typescript+typescript-linux-s390x.tgz",
+  "file": "deps/@typescript+typescript-linux-s390x.tgz",
   "deps": []
  },
  {
   "name": "@typescript/typescript-openbsd-x64",
   "version": "7.0.2",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/@typescript+typescript-openbsd-x64.tgz",
+  "file": "deps/@typescript+typescript-openbsd-x64.tgz",
   "deps": []
  },
  {
   "name": "@typescript/typescript-win32-arm64",
   "version": "7.0.2",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/@typescript+typescript-win32-arm64.tgz",
+  "file": "deps/@typescript+typescript-win32-arm64.tgz",
   "deps": []
  },
  {
   "name": "@typescript/typescript-darwin-arm64",
   "version": "7.0.2",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/@typescript+typescript-darwin-arm64.tgz",
+  "file": "deps/@typescript+typescript-darwin-arm64.tgz",
   "deps": []
  },
  {
   "name": "@typescript/typescript-netbsd-arm64",
   "version": "7.0.2",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/@typescript+typescript-netbsd-arm64.tgz",
+  "file": "deps/@typescript+typescript-netbsd-arm64.tgz",
   "deps": []
  },
  {
   "name": "@typescript/typescript-freebsd-arm64",
   "version": "7.0.2",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/@typescript+typescript-freebsd-arm64.tgz",
+  "file": "deps/@typescript+typescript-freebsd-arm64.tgz",
   "deps": []
  },
  {
   "name": "@typescript/typescript-linux-loong64",
   "version": "7.0.2",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/@typescript+typescript-linux-loong64.tgz",
+  "file": "deps/@typescript+typescript-linux-loong64.tgz",
   "deps": []
  },
  {
   "name": "@typescript/typescript-linux-riscv64",
   "version": "7.0.2",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/@typescript+typescript-linux-riscv64.tgz",
+  "file": "deps/@typescript+typescript-linux-riscv64.tgz",
   "deps": []
  },
  {
   "name": "@typescript/typescript-openbsd-arm64",
   "version": "7.0.2",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/@typescript+typescript-openbsd-arm64.tgz",
+  "file": "deps/@typescript+typescript-openbsd-arm64.tgz",
   "deps": []
  },
  {
   "name": "@typescript/typescript-linux-mips64el",
   "version": "7.0.2",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/@typescript+typescript-linux-mips64el.tgz",
+  "file": "deps/@typescript+typescript-linux-mips64el.tgz",
   "deps": []
  },
  {
   "name": "events",
   "version": "3.3.0",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/events.tgz",
+  "file": "deps/events.tgz",
   "deps": []
  },
  {
   "name": "mime-db",
   "version": "1.54.0",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/mime-db.tgz",
+  "file": "deps/mime-db.tgz",
   "deps": []
  },
  {
   "name": "tapable",
   "version": "2.3.3",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/tapable.tgz",
+  "file": "deps/tapable.tgz",
   "deps": []
  },
  {
   "name": "watchpack",
   "version": "2.6.3",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/watchpack.tgz",
+  "file": "deps/watchpack.tgz",
   "deps": [
    "graceful-fs"
   ]
@@ -745,13 +745,13 @@
  {
   "name": "graceful-fs",
   "version": "4.2.11",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/graceful-fs.tgz",
+  "file": "deps/graceful-fs.tgz",
   "deps": []
  },
  {
   "name": "browserslist",
   "version": "4.29.5",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/browserslist.tgz",
+  "file": "deps/browserslist.tgz",
   "deps": [
    "caniuse-lite",
    "node-releases",
@@ -763,7 +763,7 @@
  {
   "name": "schema-utils",
   "version": "4.8.1",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/schema-utils.tgz",
+  "file": "deps/schema-utils.tgz",
   "deps": [
    "ajv",
    "ajv-formats",
@@ -774,19 +774,19 @@
  {
   "name": "es-module-lexer",
   "version": "3.0.4",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/es-module-lexer.tgz",
+  "file": "deps/es-module-lexer.tgz",
   "deps": []
  },
  {
   "name": "webpack-sources",
   "version": "3.6.0",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/webpack-sources.tgz",
+  "file": "deps/webpack-sources.tgz",
   "deps": []
  },
  {
   "name": "enhanced-resolve",
   "version": "5.26.0",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/enhanced-resolve.tgz",
+  "file": "deps/enhanced-resolve.tgz",
   "deps": [
    "tapable",
    "graceful-fs"
@@ -795,13 +795,13 @@
  {
   "name": "@types/json-schema",
   "version": "7.0.15",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/@types+json-schema.tgz",
+  "file": "deps/@types+json-schema.tgz",
   "deps": []
  },
  {
   "name": "@webassemblyjs/ast",
   "version": "1.14.1",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/@webassemblyjs+ast.tgz",
+  "file": "deps/@webassemblyjs+ast.tgz",
   "deps": [
    "@webassemblyjs/helper-numbers",
    "@webassemblyjs/helper-wasm-bytecode"
@@ -810,13 +810,13 @@
  {
   "name": "chrome-trace-event",
   "version": "1.0.4",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/chrome-trace-event.tgz",
+  "file": "deps/chrome-trace-event.tgz",
   "deps": []
  },
  {
   "name": "@webassemblyjs/wasm-edit",
   "version": "1.14.1",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/@webassemblyjs+wasm-edit.tgz",
+  "file": "deps/@webassemblyjs+wasm-edit.tgz",
   "deps": [
    "@webassemblyjs/ast",
    "@webassemblyjs/wasm-gen",
@@ -831,7 +831,7 @@
  {
   "name": "minimizer-webpack-plugin",
   "version": "5.13.1",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/minimizer-webpack-plugin.tgz",
+  "file": "deps/minimizer-webpack-plugin.tgz",
   "deps": [
    "terser",
    "jest-worker",
@@ -842,7 +842,7 @@
  {
   "name": "@webassemblyjs/wasm-parser",
   "version": "1.14.1",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/@webassemblyjs+wasm-parser.tgz",
+  "file": "deps/@webassemblyjs+wasm-parser.tgz",
   "deps": [
    "@webassemblyjs/ast",
    "@webassemblyjs/utf8",
@@ -855,7 +855,7 @@
  {
   "name": "jest-cli",
   "version": "30.5.2",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/jest-cli.tgz",
+  "file": "deps/jest-cli.tgz",
   "deps": [
    "chalk",
    "yargs",
@@ -872,7 +872,7 @@
  {
   "name": "@jest/core",
   "version": "30.5.2",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/@jest+core.tgz",
+  "file": "deps/@jest+core.tgz",
   "deps": [
    "chalk",
    "slash",
@@ -907,7 +907,7 @@
  {
   "name": "@jest/types",
   "version": "30.5.1",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/@jest+types.tgz",
+  "file": "deps/@jest+types.tgz",
   "deps": [
    "chalk",
    "@types/node",
@@ -921,7 +921,7 @@
  {
   "name": "import-local",
   "version": "3.2.0",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/import-local.tgz",
+  "file": "deps/import-local.tgz",
   "deps": [
    "pkg-dir",
    "resolve-cwd"
@@ -930,49 +930,49 @@
  {
   "name": "fast-uri",
   "version": "4.2.3",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/fast-uri.tgz",
+  "file": "deps/fast-uri.tgz",
   "deps": []
  },
  {
   "name": "require-from-string",
   "version": "2.0.2",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/require-from-string.tgz",
+  "file": "deps/require-from-string.tgz",
   "deps": []
  },
  {
   "name": "json-schema-traverse",
   "version": "1.0.0",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/json-schema-traverse.tgz",
+  "file": "deps/json-schema-traverse.tgz",
   "deps": []
  },
  {
   "name": "ms",
   "version": "2.1.3",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/ms.tgz",
+  "file": "deps/ms.tgz",
   "deps": []
  },
  {
   "name": "acorn",
   "version": "8.19.0",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/acorn.tgz",
+  "file": "deps/acorn.tgz",
   "deps": []
  },
  {
   "name": "acorn-jsx",
   "version": "5.3.2",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/acorn-jsx.tgz",
+  "file": "deps/acorn-jsx.tgz",
   "deps": []
  },
  {
   "name": "estraverse",
   "version": "5.3.0",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/estraverse.tgz",
+  "file": "deps/estraverse.tgz",
   "deps": []
  },
  {
   "name": "locate-path",
   "version": "8.0.0",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/locate-path.tgz",
+  "file": "deps/locate-path.tgz",
   "deps": [
    "p-locate"
   ]
@@ -980,19 +980,19 @@
  {
   "name": "unicorn-magic",
   "version": "0.4.1",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/unicorn-magic.tgz",
+  "file": "deps/unicorn-magic.tgz",
   "deps": []
  },
  {
   "name": "is-extglob",
   "version": "2.1.1",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/is-extglob.tgz",
+  "file": "deps/is-extglob.tgz",
   "deps": []
  },
  {
   "name": "brace-expansion",
   "version": "5.0.12",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/brace-expansion.tgz",
+  "file": "deps/brace-expansion.tgz",
   "deps": [
    "balanced-match"
   ]
@@ -1000,13 +1000,13 @@
  {
   "name": "@isaacs/nonrecursive-glob-match",
   "version": "1.0.1",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/@isaacs+nonrecursive-glob-match.tgz",
+  "file": "deps/@isaacs+nonrecursive-glob-match.tgz",
   "deps": []
  },
  {
   "name": "levn",
   "version": "0.4.1",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/levn.tgz",
+  "file": "deps/levn.tgz",
   "deps": [
    "prelude-ls",
    "type-check"
@@ -1015,25 +1015,25 @@
  {
   "name": "deep-is",
   "version": "0.1.4",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/deep-is.tgz",
+  "file": "deps/deep-is.tgz",
   "deps": []
  },
  {
   "name": "word-wrap",
   "version": "1.2.5",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/word-wrap.tgz",
+  "file": "deps/word-wrap.tgz",
   "deps": []
  },
  {
   "name": "prelude-ls",
   "version": "1.2.1",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/prelude-ls.tgz",
+  "file": "deps/prelude-ls.tgz",
   "deps": []
  },
  {
   "name": "type-check",
   "version": "0.4.0",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/type-check.tgz",
+  "file": "deps/type-check.tgz",
   "deps": [
    "prelude-ls"
   ]
@@ -1041,7 +1041,7 @@
  {
   "name": "fast-levenshtein",
   "version": "3.0.0",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/fast-levenshtein.tgz",
+  "file": "deps/fast-levenshtein.tgz",
   "deps": [
    "fastest-levenshtein"
   ]
@@ -1049,7 +1049,7 @@
  {
   "name": "which",
   "version": "7.0.0",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/which.tgz",
+  "file": "deps/which.tgz",
   "deps": [
    "isexe"
   ]
@@ -1057,13 +1057,13 @@
  {
   "name": "path-key",
   "version": "4.0.0",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/path-key.tgz",
+  "file": "deps/path-key.tgz",
   "deps": []
  },
  {
   "name": "shebang-command",
   "version": "2.0.0",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/shebang-command.tgz",
+  "file": "deps/shebang-command.tgz",
   "deps": [
    "shebang-regex"
   ]
@@ -1071,7 +1071,7 @@
  {
   "name": "esrecurse",
   "version": "4.3.0",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/esrecurse.tgz",
+  "file": "deps/esrecurse.tgz",
   "deps": [
    "estraverse"
   ]
@@ -1079,13 +1079,13 @@
  {
   "name": "@types/esrecurse",
   "version": "4.3.1",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/@types+esrecurse.tgz",
+  "file": "deps/@types+esrecurse.tgz",
   "deps": []
  },
  {
   "name": "@humanfs/core",
   "version": "0.20.0",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/@humanfs+core.tgz",
+  "file": "deps/@humanfs+core.tgz",
   "deps": [
    "@humanfs/types"
   ]
@@ -1093,13 +1093,13 @@
  {
   "name": "@humanfs/types",
   "version": "0.16.0",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/@humanfs+types.tgz",
+  "file": "deps/@humanfs+types.tgz",
   "deps": []
  },
  {
   "name": "flat-cache",
   "version": "6.1.23",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/flat-cache.tgz",
+  "file": "deps/flat-cache.tgz",
   "deps": [
    "flatted",
    "cacheable",
@@ -1109,13 +1109,13 @@
  {
   "name": "@eslint/object-schema",
   "version": "3.0.5",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/@eslint+object-schema.tgz",
+  "file": "deps/@eslint+object-schema.tgz",
   "deps": []
  },
  {
   "name": "side-channel",
   "version": "1.1.1",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/side-channel.tgz",
+  "file": "deps/side-channel.tgz",
   "deps": [
    "es-errors",
    "object-inspect",
@@ -1127,31 +1127,31 @@
  {
   "name": "es-define-property",
   "version": "1.0.1",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/es-define-property.tgz",
+  "file": "deps/es-define-property.tgz",
   "deps": []
  },
  {
   "name": "wrappy",
   "version": "1.0.2",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/wrappy.tgz",
+  "file": "deps/wrappy.tgz",
   "deps": []
  },
  {
   "name": "is-promise",
   "version": "4.0.0",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/is-promise.tgz",
+  "file": "deps/is-promise.tgz",
   "deps": []
  },
  {
   "name": "path-to-regexp",
   "version": "9.0.0",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/path-to-regexp.tgz",
+  "file": "deps/path-to-regexp.tgz",
   "deps": []
  },
  {
   "name": "negotiator",
   "version": "1.1.0",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/negotiator.tgz",
+  "file": "deps/negotiator.tgz",
   "deps": [
    "content-type"
   ]
@@ -1159,25 +1159,25 @@
  {
   "name": "forwarded",
   "version": "0.2.0",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/forwarded.tgz",
+  "file": "deps/forwarded.tgz",
   "deps": []
  },
  {
   "name": "ipaddr.js",
   "version": "2.5.0",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/ipaddr.js.tgz",
+  "file": "deps/ipaddr.js.tgz",
   "deps": []
  },
  {
   "name": "bytes",
   "version": "3.1.2",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/bytes.tgz",
+  "file": "deps/bytes.tgz",
   "deps": []
  },
  {
   "name": "raw-body",
   "version": "4.0.0",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/raw-body.tgz",
+  "file": "deps/raw-body.tgz",
   "deps": [
    "bytes",
    "http-errors"
@@ -1186,7 +1186,7 @@
  {
   "name": "iconv-lite",
   "version": "0.7.3",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/iconv-lite.tgz",
+  "file": "deps/iconv-lite.tgz",
   "deps": [
    "safer-buffer"
   ]
@@ -1194,49 +1194,49 @@
  {
   "name": "inherits",
   "version": "2.0.4",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/inherits.tgz",
+  "file": "deps/inherits.tgz",
   "deps": []
  },
  {
   "name": "toidentifier",
   "version": "1.0.1",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/toidentifier.tgz",
+  "file": "deps/toidentifier.tgz",
   "deps": []
  },
  {
   "name": "setprototypeof",
   "version": "1.2.0",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/setprototypeof.tgz",
+  "file": "deps/setprototypeof.tgz",
   "deps": []
  },
  {
   "name": "ee-first",
   "version": "1.1.1",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/ee-first.tgz",
+  "file": "deps/ee-first.tgz",
   "deps": []
  },
  {
   "name": "caniuse-lite",
   "version": "1.0.30001819",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/caniuse-lite.tgz",
+  "file": "deps/caniuse-lite.tgz",
   "deps": []
  },
  {
   "name": "node-releases",
   "version": "2.0.60",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/node-releases.tgz",
+  "file": "deps/node-releases.tgz",
   "deps": []
  },
  {
   "name": "electron-to-chromium",
   "version": "1.5.466",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/electron-to-chromium.tgz",
+  "file": "deps/electron-to-chromium.tgz",
   "deps": []
  },
  {
   "name": "update-browserslist-db",
   "version": "1.3.4",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/update-browserslist-db.tgz",
+  "file": "deps/update-browserslist-db.tgz",
   "deps": [
    "escalade",
    "picocolors"
@@ -1245,13 +1245,13 @@
  {
   "name": "baseline-browser-mapping",
   "version": "2.11.34",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/baseline-browser-mapping.tgz",
+  "file": "deps/baseline-browser-mapping.tgz",
   "deps": []
  },
  {
   "name": "ajv-formats",
   "version": "3.0.1",
-  "file": "/tmp/opencode/tar-bench/corpus/deps/ajv-formats.tgz",
+  "file": "deps/ajv-formats.tgz",
   "deps": [
    "ajv"
   ]
